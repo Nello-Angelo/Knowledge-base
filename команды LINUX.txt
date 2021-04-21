@@ -32,4 +32,4 @@ grep -r Hallo /root (Чтобы вести поиск среди всех фай
 grep -e World -e Hallo -e mir -e 'my mama' t.txt (ПОИСК ПО НЕСКОЛЬКИМ СЛОВАМ)
 ls t* | xargs grep hallo (рекурсивная выборка с ограниченым списком)
 ls y* | xargs rm -rf && ls t* | xargs rm -rf (пример логического "и" сначала эту команду потом эту)
-
+zgrep --color=always '100' ./app.log_2021-04-13* | grep --color=always 'IPTV' (если нужно грепнуть вывод, который грепнул раннее, пример синтаксиса и передачи вывода "grep")
