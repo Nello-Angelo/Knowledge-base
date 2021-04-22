@@ -334,7 +334,7 @@ metadata:
   name: compute-resources
 spec:
   hard:
-    requests.cpu: "300m"
+    requests.cpu: 300m
     requests.memory: 300Mi
-    limits.cpu: "300m"
+    limits.cpu: 300m
     limits.memory: 300Mi
