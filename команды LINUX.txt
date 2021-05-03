@@ -33,4 +33,4 @@ grep -e World -e Hallo -e mir -e 'my mama' t.txt (ПОИСК ПО НЕСКОЛЬ
 ls t* | xargs grep hallo (рекурсивная выборка с ограниченым списком)
 ls y* | xargs rm -rf && ls t* | xargs rm -rf (пример логического "и" сначала эту команду потом эту)
 zgrep/grep --color=always '100' ./app.log_2021-04-13* | grep --color=always 'IPTV' (если нужно грепнуть другой греп, пример синтаксиса и передачи вывода для второго "grep")
-
+ssh root@111.222.222.333(ssh из терминала) ssh keygen (создать ключи) ssh-copy-id root@111.222.333.444 (закинуть публичный ключ на удаленную тачку)
