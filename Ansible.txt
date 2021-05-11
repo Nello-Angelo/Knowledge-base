@@ -97,3 +97,48 @@
   handlers:(для перезапуска служб, сам по себе не сработает, его нужно вызвать в указанной точке в playbook)(но рестарт можно сделать и через обычное задание в service state=restarted)
   - name: Restart web (имя задания)
     service: name=nginx state=restarted (модуль сервиса, имя сервиса, ожидаемое состояние)
+
+  - name: Create a ext4 filesystem on /dev/sdb1 and check disk blocks (проверить)
+    filesystem: (модуль создания файловой системы)
+     fstype: ext4 (Тип создаваемой файловой системы)
+     dev: /dev/sdb1 (путь к устройству )
+     opts: -cc (Список параметров, передаваемых команде mkfs, то есть - ключи)
+     force: yes (Если yes, позволяет создавать новую файловую систему на устройствах, на которых уже есть файловая система)
+
+  - name: module of founding (проверить)
+    find: (модуль поиска)
+      paths: /tmp (путь до того места где будем искать)
+      age: 2d (возраст того что ищем)
+      recurse: yes (делать рекурсивный поиск или нет)
+      size: 1m (размер того что ищем)
+      patterns: '*.old,*.log.gz' (шаблон поиска)
+      use_regex: yes (это поле указывается если в патерне задаем большие регулярные выражения)
+      file_type: directory (тип того что ищем)
+      excludes: 'nginx,mysql' (указываем исключения из поиска)
+      hidden: yes (если хотим искать и скрытые тоже)
+
+  - name: Mount up device by label (проверить)
+    mount: (модуль монтирования)
+     path: /srv/disk (Путь к точке монтирования)
+     src: /dev/sr0 (путь к разделу который будем монтировать)
+     fstype: ext4 (файловая система раздела)
+     state: mounted (ожидаемое состояние)
+ 
+  - name: Run a script (проверить)
+    script: /some/local/script.sh (путь до скрипта)
+
+  - name: install elasticsearch 6.x deb repository (проверить)
+    apt_repository:
+      repo: deb https://artifacts.elastic.co/packages/6.x/apt stable main (указываем репозиторий, версия - стабильная, основная)
+      state: present (указаваем что нужно добавить)
+      update_cache: yes (работает как apt-update)
+
+  - name: Add repository (проверить)
+    yum_repository: 
+     name: epel (имя)
+     description: EPEL YUM repo (просто описание)
+     baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/ (URL-адрес каталога, в котором находится каталог repodata репозитория yum, сам репозиторий)
+     enabled: yes (Это сообщает yum, использовать ли этот репозиторий)
+     file: external_repos (Имя файла без расширения .repo для сохранения репо, не обязательно указывать)
+     gpgkey: (URL-адрес, указывающий на защищенный ASCII ключевой файл GPG для репозитория)
+     gpgcheck: yes (Сообщает yum, следует ли выполнять проверку подписи GPG для пакетов)
