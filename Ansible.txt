@@ -181,5 +181,11 @@
     package_facts: (модуль вывода информации о пакетах)
       manager: apt (типы доступных пакетных менеджеров для проверки rpm, apt, portage, pkg и режим auto)
   - debug:  (модуль вывода содержания переменой в консоль)
-      msg: "{{ ansible_facts.packages['wget'] }} are installed!" (указываем переменную и пакет о котором хотим получить информацию)
+      msg: "{{ ansible_facts.packages['wget'] }}" (указываем переменную и пакет о котором хотим получить информацию)
     when: "'wget' in ansible_facts.packages" (условие что данный пакет должен присутствовать в списке пакетов, который хранится в переменной ansible_facts.packages)
+
+  - name: populate service facts (имя задания)
+    service_facts: (модуль вывода информации о сервисах)
+  - debug: (модуль вывода содержания переменой в консоль)
+      msg: "{{ ansible_facts.services['cron.service'] }}"(переменная и служба о которой получим информацию, если хотим информацию в systemd то указываем имя.service если в sysv то имя)
+    when: "'cron.service' in ansible_facts.services" (условие что данная служба должна присутствовать в списке служб, который хранится в переменной ansible_facts.services)
