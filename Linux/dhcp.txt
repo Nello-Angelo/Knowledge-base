@@ -1,10 +1,14 @@
 yum install dhcp
+отредактировать файл по пути /etc/sysconfig/network-scripts/ifcfg-имя сетевухи (так как dhcp сервер должен иметь статические настройки)
+добавить и изменить эти параметры в сетевухе для dhcp BOOTPROTO=static IPADDR=из вашей подсети PREFIX=из вашей подсети GATEWAY=ip роутера или того что будет шлюзом DNS1=можно ip роутера
+systemctl restart network
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 67 -j ACCEPT (открываем порт для dhcp через iptables) 
+systemctl restart iptables
+/etc/dhcp/dhcpd.conf (конфиг)
 systemctl start dhcpd
 systemctl enable dhcpd
-/etc/dhcp/dhcpd.conf (конфиг)
--A INPUT -p tcp -m state --state NEW -m tcp --dport 67 -j ACCEPT (открываем порт для dhcp)
 
-------------------config------------------
+------------------config for centos7-----------------
 option domain-name "angeloT2";
 option domain-name-servers 192.168.43.1;
 default-lease-time 32400;
