@@ -1,0 +1,4 @@
+---------------------------iptables----------------------------
+-A INPUT/OUTPUT -s 192.168.80.1/24 -p tcp -m tcp --dport 22 -j ACCEPT/DROP (разрешаем или запрещаем входящий или исходящий достут к порту по ip-адресу с указанием источника)
+-A INPUT/OUTPUT -p tcp -m state --state NEW -m tcp --dport 67 -j ACCEPT/DROP (открываем или закрываем входящий или исходящий трафик по указанному порту)
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT (разрешаем уже установленное соединение в обе стороны)
