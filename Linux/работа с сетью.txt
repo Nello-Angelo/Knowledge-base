@@ -51,7 +51,13 @@ host maylo {
 }
 
 ----------------------------------------------------------------------------------------Сетевые утилиты и команды-----------------------------------------------------------------------
+nmcli connection reload(перезагрузка всей кофигурации после изменений в файлах /etc/sysconfig/network-scripts/ifcfg-имя сетевухи и прочие файлы или /etc/NetworkManager/прочие файлы)
+nmcli -p device status (посмотреть состояние интерфейсов) nmcli -p general status(Состояние NetworkManager) nmcli connection show(покажет NAME, UUID, TYPE, DEVICE это - Профиль connection)
+nmcli connection up/down id ens33(вкл/выкл профиля интерфейса - значение поля connection, их может быть не одно у одного device) nmcli device connect/disconnect ens33(вкл/выкл устройство)
+nmcli connection add type ethernet/bridge/... con-name имя подключения ifname имя сетевухи(создать тип подключения для интерфейса и привязать, конфиги здесь /etc/sysconfig/network-scripts)
+nmcli connection show имя типа подключения жмем enter (что бы посмотреть список опций для изменения для типа подключения) 
+nmcli connection modify имя подключения имя опции значение параметра для опции (что бы изменить или добавить значения параметров для типа подключения)
 ssh root@111.222.222.333(ssh из терминала) ssh keygen (создать ключи) ssh-copy-id root@111.222.333.444 (закинуть публичный ключ на удаленную тачку)
 ip route add 192.168.43.0/24 via 192.168.43.1 dev имя сетевухи (добавить маршрут через который будет идти трафик до перезагрузки, это может быть другая сетевая карта или роутер)
-ip link set dev ens33 up/down mtu 1500 (вк/выкл сетевухи) (строчкой ниже указаны поля которые нужно либо изменить, либо добавить в файл если хотим задать статические настройки)
-BOOTPROTO=static IPADDR=10.16.103.52 PREFIX=24 GATEWAY=10.16.103.1 DNS1=8.8.8.8 DNS2=8.8.4.4 ONBOOT="yes"(редактировать в файле по пути /etc/sysconfig/network-scripts/ifcfg-имя сетевухи)
+ip link set dev ens33 up/down mtu 1500 (вк/выкл устройства) (строчкой ниже указаны поля которые нужно либо изменить, либо добавить в файл если хотим задать статические настройки)
+BOOTPROTO=static IPADDR=10.16.103.52 PREFIX=24 GATEWAY=10.16.103.1 DNS1=8.8.8.8 DNS2=8.8.4.4 ONBOOT=yes (редактировать в файле по пути /etc/sysconfig/network-scripts/ifcfg-имя сетевухи)
