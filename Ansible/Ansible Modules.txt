@@ -162,22 +162,6 @@
   - name: Run a script (имя задания) 
     script: /some/local/script.sh (путь до скрипта, который находится на контроллере ansible, удаленные скрипты лучше запускать через модуль shell: /path/to/remote_script так быстрее)
 
-  - name: install elasticsearch 6.x deb repository (имя задания) 
-    apt_repository: (модуль добавления репозитория)
-      repo: deb https://artifacts.elastic.co/packages/6.x/apt stable main (указываем репозиторий, версия - стабильная, основная)
-      state: present (указаваем что нужно добавить)
-      update_cache: yes (работает как apt-update)
-
-  - name: Add repository (имя задания) 
-    yum_repository: (модуль добавления репозитория)
-     name: epel (имя)
-     description: EPEL YUM repo (просто описание)
-     baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/ (URL-адрес каталога, в котором находится каталог repodata репозитория yum, сам репозиторий)
-     enabled: yes (Это сообщает yum, использовать ли этот репозиторий)
-     file: external_repos (Имя файла без расширения .repo для сохранения репо, не обязательно указывать)
-     gpgkey: (URL-адрес, указывающий на защищенный ASCII ключевой файл GPG для репозитория)
-     gpgcheck: yes (Сообщает yum, следует ли выполнять проверку подписи GPG для пакетов)
-
   - template:(модуль копирования шаблонных файлов)(также можно в файле указать переменную из playbook по типу host: "{{host}}" в скобках имя переменной из playbook, а не значение)
       src: /root/ansible/templ.j2 (путь откуда брать файл)(файл должен быть в формате j2, шаблонные переменные могут выглядеть так host: "{{ansible_host}}" эта переменная из инвентаря)
       dest: /root/ansible/templ.txt (точка назначения на удаленном хосте, можно создать новый файл, а можно указать существующий и перезаписать его)
