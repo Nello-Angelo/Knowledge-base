@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------iptables-------------------------------------------------------------------------------
--A добавление нового правила. -p протокол. --dport порт. -m модуль. -s источник. -j действие. 
+-A добавление нового правила. -p протокол. --dport порт. -m модуль. -s источник. -j действие.      Конфиг здесь /etc/sysconfig/iptables
 -A INPUT/OUTPUT -s 192.168.80.1/24 -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT/DROP/LOG --log-prefix "error" (ACCEPT, DROP или LOG входящий или исходящий трафик по порту и ip)
 -A INPUT/OUTPUT -p tcp -m state --state NEW -m tcp --dport 67 -j ACCEPT/DROP/LOG --log-prefix "error" (разрешаем, запрещаем или логируем входящий или исходящий трафик по указанному порту)
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT (разрешаем уже установленное соединение в обе стороны)
@@ -17,7 +17,7 @@ yum install dhcp
 отредактировать файл по пути /etc/sysconfig/network-scripts/ifcfg-имя сетевухи (так как dhcp сервер должен иметь статические настройки)
 добавить и изменить эти параметры в сетевухе для dhcp BOOTPROTO=static IPADDR=из вашей подсети PREFIX=из вашей подсети GATEWAY=ip роутера или того что будет шлюзом DNS1=можно ip роутера
 systemctl restart network
--A INPUT -p tcp -m state --state NEW -m tcp --dport 67 -j ACCEPT (открываем порт для dhcp через iptables) 
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 67 -j ACCEPT (открываем порт для dhcp через iptables, конфиг здесь /etc/sysconfig/iptables) 
 systemctl restart iptables
 /etc/dhcp/dhcpd.conf (конфиг)
 systemctl start dhcpd
