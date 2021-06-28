@@ -70,7 +70,7 @@
   - lineinfile:
       path: /etc/zabbix/zabbix_agentd.conf
       regexp: '^ServerActive=127\.0\.0\.1'
-      line: '# ServerActive=127.0.0.1'
+      line: '# ServerActive=127.0.0.1'     (если не используем этот тип проверок)
       owner: root
       group: root
       firstmatch: yes
