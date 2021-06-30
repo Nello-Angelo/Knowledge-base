@@ -69,8 +69,16 @@
 
   - lineinfile:
       path: /etc/zabbix/zabbix_agentd.conf
+      regexp: '^# HostMetadata='
+      line: 'HostMetadata=linux'  (это просто метка по которой опция авто добавления в zabbix будет искать хост)
+      owner: root
+      group: root
+      firstmatch: yes
+
+  - lineinfile:
+      path: /etc/zabbix/zabbix_agentd.conf
       regexp: '^ServerActive=127\.0\.0\.1'
-      line: '# ServerActive=127.0.0.1'     (если не используем этот тип проверок)
+      line: ServerActive=ip-address zabbix-server (если не используете такой тип проверок то закоментируйте это поле)
       owner: root
       group: root
       firstmatch: yes
