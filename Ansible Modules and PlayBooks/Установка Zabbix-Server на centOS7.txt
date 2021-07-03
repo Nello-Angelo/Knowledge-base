@@ -1,5 +1,5 @@
 ---
-- name: install   #предпологается что на сервере уже установлен epel-release и сделан upgrade системы и она работает на свежем ядре
+- name: install                            #предпологается что на сервере уже установлен epel-release и сделан upgrade системы и она работает на свежем ядре
   hosts: hostname   
   become: yes
 
@@ -17,7 +17,7 @@
       - zabbix-server-mysql
       - centos-release-scl
       - zabbix-agent
-      - iptables-services
+      - iptables-services                   #если не используешь его, то убери все связанное с ним и замени на свой с добавлением правил другого firewall
       - MySQL-python
  
   - systemd:
