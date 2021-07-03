@@ -1,0 +1,42 @@
+---
+- name: install
+  hosts: hostname
+  become: yes
+
+  tasks:
+  - name: Add repository
+    yum_repository:
+     name: grafana
+     description: grafana
+     baseurl: https://packages.grafana.com/oss/rpm
+     gpgkey: https://packages.grafana.com/gpg.key
+     sslverify: yes
+     sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+     gpgcheck: yes
+     repo_gpgcheck: yes
+     enabled: yes
+     state: present
+
+  - yum:
+     name: grafana
+     state: latest
+
+  - name: start
+    systemd:
+      state: started
+      daemon_reload: yes
+      name: grafana-server
+      enabled: yes
+
+  - firewalld:
+      port: 3000/tcp
+      permanent: yes
+      state: enabled
+
+  - name: Install
+    grafana_plugin:
+     name: alexanderzobnin-zabbix-app
+     version: latest
+     state: present
+
+  - shell: reboot
