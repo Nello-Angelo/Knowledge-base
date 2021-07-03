@@ -16,19 +16,8 @@
     loop:
       - zabbix-server-mysql
       - centos-release-scl
-      - zabbix-agent
-      - iptables-services                   #если не используешь его, то убери все связанное с ним и замени на свой с добавлением правил другого firewall
+      - zabbix-agent              
       - MySQL-python
- 
-  - systemd:
-      name: iptables
-      state: started
-      enabled: yes
-
-  - systemd:
-      name: firewalld
-      state: stopped
-      enabled: no
 
   - lineinfile:
       path: /etc/yum.repos.d/zabbix.repo
@@ -57,29 +46,7 @@
       line: SELINUX=disabled
       owner: root
       group: root
-      firstmatch: yes
-
-  - lineinfile:
-      path: /etc/sysconfig/iptables
-      insertafter: '^-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT'
-      line: "{{item}}"
-      owner: root
-      group: root
-      firstmatch: yes
-    loop:
-      - -A INPUT -p tcp -m tcp --dport 10050 -j ACCEPT
-      - -A INPUT -p tcp -m tcp --dport 10051 -j ACCEPT
-      - -A OUTPUT -p tcp -m tcp --dport 10050 -j ACCEPT
-      - -A OUTPUT -p tcp -m tcp --dport 10051 -j ACCEPT
-      - -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
-      - -A OUTPUT -p tcp -m tcp --dport 80 -j ACCEPT
-      - -A OUTPUT -p tcp -m tcp --dport 443 -j ACCEPT
-      - -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
-
-  - name:
-    service:
-      name: iptables
-      state: restarted 
+      firstmatch: yes 
 
   - name: Creating database
     mysql_db: 
