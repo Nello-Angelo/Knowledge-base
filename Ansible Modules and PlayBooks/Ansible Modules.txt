@@ -249,6 +249,10 @@
   - firewalld:
       port: 10050-10051/tcp (можно указать диапозон или один порт и протокол, поля port: и service: определяются в разных заданиях, в одном задании можно открыть порт или добавить сервис)
       service: https (добавляем правило для сервиса и разрешаем пропускать через него трафик)
+      zone: internal(Зона для добавления, удаления. Возможные значения включают block, dmz, drop, external, home, internal, public, trusted, work) (можно добавлять во всех заданиях)
+      interface: ens33 (Интерфейс, который нужно добавить, удалить в, из зоны в firewalld, пример zone: trusted)(interface конфигурировать в отдельном задании без полей port: и service:)
+      rich_rule: rule forward-port port=443 protocol=tcp to-port=8443(гибкие правила для добавления, удаления в, из firewalld)(указывать в отдельных заданиях без полей port: и service:)
+      immediate: yes (указываем что конфигурация будет применена немедленно, если установлено поле permanent: yes)
       permanent: yes (указываем должна ли эта конфигурация быть в текущей конфигурации firewalld или сохраняться при перезагрузках)
       state: enabled (указываем что правила для порта или сервиса должны быть включены)
   
@@ -271,6 +275,6 @@
     grafana_plugin: (модуль управления плагинами)
      grafana_plugin_url: https://storage.googleapis.com/plugins-community/alexanderzobnin-zabbix-app/release/4.1.5/alexanderzobnin-zabbix-app-4.1.5.zip (можно дополнительно указать url)
      name: alexanderzobnin-zabbix-app (полное имя плагина)
-     grafana_plugins_dir: /path/to/dir (Каталог, в который будет установлен плагин Grafanaб но это по желанию)
+     grafana_plugins_dir: /path/to/dir (Каталог, в который будет установлен плагин Grafanaб, но это по желанию и необходимости)
      version: latest (версия плагина)
      state: present (Статус плагина Grafana - absent чтобы удалить)
