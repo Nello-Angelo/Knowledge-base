@@ -23,8 +23,6 @@
       path: /etc/yum.repos.d/zabbix.repo
       regexp: '^enabled=0'
       line: enabled=1
-      owner: root
-      group: root
       firstmatch: yes
 
   - yum:
@@ -44,8 +42,6 @@
       path: /etc/selinux/config
       regexp: '^SELINUX=enforcing'
       line: SELINUX=disabled
-      owner: root
-      group: root
       firstmatch: yes 
 
   - name: Creating database
@@ -70,32 +66,24 @@
       path: /etc/zabbix/zabbix_server.conf
       regexp: '^DBName=zabbix'
       line: DBName=zabbix_db
-      owner: root
-      group: root
       firstmatch: yes
   
   - lineinfile:
       path: /etc/zabbix/zabbix_server.conf
       regexp: '^DBUser=zabbix'
       line: DBUser=zabbix_user
-      owner: root
-      group: root
       firstmatch: yes
  
   - lineinfile:
       path: /etc/zabbix/zabbix_server.conf
       insertafter: '^# DBPassword='
       line: DBPassword=passw0rd123
-      owner: root
-      group: root
       firstmatch: yes
 
   - lineinfile:
       path: /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf
       regexp: '^; php_value[date.timezone] = Europe/Riga'
       line: 'php_value[date.timezone] = Europe/Moscow'
-      owner: root
-      group: root
       firstmatch: yes
  
   - name:
