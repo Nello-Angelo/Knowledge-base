@@ -1,0 +1,25 @@
+#!groovy
+// Check ub1 properties
+properties([disableConcurrentBuilds()])  (запрещаем запуск больше одной версии этого pipelines, чтобы не было конфликтов)
+
+pipeline {
+    agent {  (ниже указываем метку хоста с агентом, на котором он установлен, где нужно выполнять pipeline)
+        label 'master' (метка) 
+        }
+    options { (ниже указываем дополнительные опции)
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10')) (сохраняем логи и артефакты последних 10 сборок)  
+        timestamps() (указываем что хотим видеть временные отметки в графическом интерфейсе)
+    }
+    stages {   (ниже описываем этапы действий)
+        stage("First step") {  (описание этапа)
+            steps {  (ниже описываем шаги-действия)
+                sh 'ssh root@ub1 \'hostname\''  (команда)
+            }
+        }
+        stage("Second step") { (описание этапа)
+            steps {  (ниже описываем шаги-действия)
+                sh 'ssh root@ub1 \'uptime\''   (команда)
+            }
+        }
+    }
+}
