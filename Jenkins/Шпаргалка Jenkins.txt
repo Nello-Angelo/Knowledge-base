@@ -6,6 +6,7 @@ pipeline {
     agent {  (ниже указываем метку хоста с агентом, на котором он установлен, где нужно выполнять pipeline)
         label 'master' (метка) 
         }
+    triggers { pollSCM('* * * * *') } (создаем триггер который будет делать опрос на наличие изменений-коммитов)
     options { (ниже указываем дополнительные опции)
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10')) (сохраняем логи и артефакты последних 10 сборок)  
         timestamps() (указываем что хотим видеть временные отметки в графическом интерфейсе)
@@ -23,7 +24,7 @@ pipeline {
         }
         stage("Second step") { (описание этапа)
             steps {  (ниже описываем шаги-действия)
-                  dir ('Jenkins') {  (указываем в какой лежит pipeline на GitHub)
+                  dir ('docker/toolbox') {  (указываем в какой папке лежит dockerfile на GitHub)
                           sh 'docker build . ' (команда)
                   }
             }
