@@ -21,5 +21,12 @@ pipeline {
                 sh 'ssh root@ub1 \'uptime\''   (команда)
             }
         }
+        stage("Second step") { (описание этапа)
+            steps {  (ниже описываем шаги-действия)
+                  dir ('Jenkins') {  (указываем в какой лежит pipeline на GitHub)
+                          sh 'docker build . ' (команда)
+                  }
+            }
+        }
     }
 }
