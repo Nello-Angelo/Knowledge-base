@@ -25,7 +25,7 @@ pipeline {
         stage("Second step") { (описание этапа)
             steps {  (ниже описываем шаги-действия)
                   dir ('docker/toolbox') {  (указываем в какой папке лежит dockerfile на GitHub)
-                          sh 'docker build . ' (команда)
+                          sh 'docker build . ' (команда собрать контейнер в текущей папке)
                   }
             }
         }
