@@ -10,15 +10,6 @@
 
   - shell: yum clean all
 
-  - yum:
-     name: "{{item}}"
-     state: latest
-    loop:
-      - zabbix-server-mysql
-      - centos-release-scl
-      - zabbix-agent              
-      - MySQL-python
-
   - lineinfile:
       path: /etc/yum.repos.d/zabbix.repo
       regexp: '^enabled=0'
@@ -29,6 +20,10 @@
      name: "{{item}}"
      state: latest
     loop:
+      - zabbix-server-mysql
+      - centos-release-scl
+      - zabbix-agent              
+      - MySQL-python
       - zabbix-web-mysql-scl
       - zabbix-apache-conf-scl
       - mariadb-server
