@@ -17,22 +17,12 @@
       - centos-release-scl
       - zabbix-agent
       - iptables-services  
-  
-  - systemd:
-      name: iptables
-      state: started
-      enabled: yes 
 
   - systemd:
       name: firewalld
       state: stopped
-      enabled: no
+      enabled: no  
 
-  - systemd:
-      name: zabbix-agent
-      state: started  
-      enabled: yes 
-  
   - lineinfile:
       path: /etc/selinux/config
       regexp: '^SELINUX=enforcing'
@@ -49,11 +39,6 @@
       - -A INPUT -p tcp -m tcp --dport 10051 -j ACCEPT
       - -A OUTPUT -p tcp -m tcp --dport 10050 -j ACCEPT
       - -A OUTPUT -p tcp -m tcp --dport 10051 -j ACCEPT
-
-  - name:  
-    service: 
-      name: iptables 
-      state: restarted 
 
   - lineinfile:
       path: /etc/zabbix/zabbix_agentd.conf
@@ -79,9 +64,10 @@
       line: Hostname=имя хоста
       firstmatch: yes
   
-  - name: start web
-    service:
-      name: zabbix-agent
-      state: restarted
-
-  - shell: reboot
+  - systemd:
+      name: "{{item}}"
+      state: started
+      enabled: yes  
+    loop:
+      - iptables
+      - zabbix-agent 
