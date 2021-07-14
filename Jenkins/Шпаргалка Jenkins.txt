@@ -11,12 +11,6 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10')) (сохраняем логи и артефакты последних 10 сборок)  
         timestamps() (указываем что хотим видеть временные отметки в графическом интерфейсе)
     }
-    stages {   (ниже описываем этапы действий)
-        stage("First step") {  (описание этапа)
-            steps {  (ниже описываем шаги-действия)
-                sh 'ssh root@ub1 \'hostname\''  (команда)
-            }
-        }
         stage("Second step") { (описание этапа)
             steps {  (ниже описываем шаги-действия)
                 sh 'ssh root@ub1 \'uptime\''   (команда)
