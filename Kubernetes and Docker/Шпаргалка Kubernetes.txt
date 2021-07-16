@@ -353,9 +353,9 @@ kind: ClusterRole (тип роли)
 metadata: (под ним заполняем данные о роли)
   name: admin-admin (имя роли)
 rules: (ниже указывам список того, к чему будет иметь доступ тот аккаунт, к которому будет привязана эта роль)
-- apiGroups: ["", "extensions", "apps"] (api-группы, к которым принадлежат виды сервисов, которые указываем в поле kind)
+- apiGroups: ["", "extensions", "apps"] (api-группы, к которым принадлежат виды сервисов)
   resources: ["deployments", "replicasets", "pods", "services"] (сервисы, которые можно создавать)
-  verbs: ["list", "create", "update", "patch", "delete"] (выражения, которые можно использовать вместе с kubectl для управления состоянием кластера)
+  verbs: ["list", "create", "update", "patch", "delete"] (выражения, которые можно использовать для управления состоянием кластера)
 
   
 ПРИМЕР КОНФИГУРАЦИИ СВЯЗКИ ClusterRoleBinding и RoleBinding
