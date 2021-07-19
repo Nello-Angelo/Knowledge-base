@@ -36,7 +36,8 @@ docker info (покажет общесистемную информацию) doc
 docker inspect имя образа (Docker inspect отображает низкоуровневую информацию о конкретном объекте Docker)
 docker volume create имя тома(создать том чтобы хранить данные) docker volume ls(посмотреть список) docker volume inspect имя тома (посмотреть том) docker volume rm имя тома (удалить том) 
 docker run -v имя тома:/path/to/mount в контейнере --name имя для контейнера имя образа (смонтировать созданный том в контейнер)
-
+docker network create -d имя-driver имя сети (создать сеть) docker network rm имя сети (удалить сеть) docker network inspect имя сети (посмотреть сеть)
+docker network connect/disconnect имя сети id-контейнера или имя (добавить/удалить контейнер в/из сети)
  
 
 
