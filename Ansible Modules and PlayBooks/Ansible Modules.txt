@@ -154,10 +154,11 @@
     register: result (переменная в которую записана вся информация о результате работы find)     - debug: msg="{{ files.files | sort(attribute='ctime') | map(attribute='path') | list }}"
     
   - name: Mount up device by label (имя задания) 
-    mount: (модуль монтирования)
+    mount: (модуль монтирования, создает запись в /etc/fstab чтобы раздел монтировался при загрузке)
      path: /srv/disk (Путь к точке монтирования)
      src: /dev/sda4 (путь к разделу который будем монтировать)
      fstype: ext4 (файловая система раздела)
+     opts: ro,rw (задать опции для управления состоянием раздела)
      state: mounted (ожидаемое состояние)
  
   - name: Run a script (имя задания) 
