@@ -30,7 +30,7 @@
   - name: Install
     grafana_plugin:
      name: alexanderzobnin-zabbix-app
-     version: latest
+     version: 4.1.2
      state: present
 
   - name: start
