@@ -18,19 +18,13 @@
      state: present
 
   - yum:
-     name: grafana
-     state: latest
-
-  - name: start
-    systemd:
-      state: started
-      daemon_reload: yes
-      name: grafana-server
-      enabled: yes
+     name: https://dl.grafana.com/oss/release/grafana-7.5.10-1.x86_64.rpm
+     state: present
 
   - firewalld:
       port: 3000/tcp
       permanent: yes
+      immediate: yes
       state: enabled
 
   - name: Install
@@ -39,4 +33,9 @@
      version: latest
      state: present
 
-  - shell: reboot
+  - name: start
+    systemd:
+      state: started
+      daemon_reload: yes
+      name: grafana-server
+      enabled: yes
