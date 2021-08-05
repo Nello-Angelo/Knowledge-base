@@ -66,6 +66,18 @@
       line: 'MAX_LOCKED_MEMORY=unlimited'
       firstmatch: yes
 
+  - lineinfile:
+      path: /etc/sysconfig/elasticsearch
+      regexp: '^#bootstrap.memory_lock: true'
+      line: 'bootstrap.memory_lock: true'
+      firstmatch: yes
+
+  - lineinfile:
+      path: /usr/lib/systemd/system/elasticsearch.service
+      insertafter: '^PrivateTmp=true'
+      line: 'LimitMEMLOCK=infinity'
+      firstmatch: yes
+       
   - firewalld:
       port: 9200/tcp
       permanent: yes
