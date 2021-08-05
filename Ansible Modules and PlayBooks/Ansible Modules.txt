@@ -290,3 +290,16 @@
       part_type: primary (тип раздела, доступно extended, logical, primary)
       unit: MB (значение величины, указываем это поле только если начало и конец определяем в процентах, доступно MB, MiB, GB, GiB, TB, TiB)
       state: present (статус раздела, доступно absent, present, info)
+
+  - blockinfile:
+     path: /etc/yum.repos.d/elastic.repo
+     create: yes
+     block: |
+      [elasticsearch]
+      name=Elasticsearch repository for 7.x packages
+      baseurl=https://artifacts.elastic.co/packages/7.x/yum
+      gpgcheck=1
+      gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      enabled=1
+      autorefresh=1
+      type=rpm-md
