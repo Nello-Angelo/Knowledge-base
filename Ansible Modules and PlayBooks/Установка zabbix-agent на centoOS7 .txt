@@ -71,3 +71,5 @@
     loop:
       - iptables
       - zabbix-agent 
+ 
+  - shell: reboot
