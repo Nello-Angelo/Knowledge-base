@@ -104,6 +104,12 @@
       regexp: '^#server.name: \"your-hostname\"'
       line: 'server.name: "hostname"'
       firstmatch: yes
+
+  - lineinfile:
+      path: /etc/kibana/kibana.yml
+      regexp: '^#elasticsearch.hosts: (\["http://localhost:9200"\])'
+      line: 'elasticsearch.hosts: ["http://localhost:9200"]'
+      firstmatch: yes
        
   - shell: htpasswd -bc /etc/nginx/htpasswd.users username password
     args:
