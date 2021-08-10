@@ -17,6 +17,6 @@ RUN npm run "build gpn-oil-lib"
 RUN npm run "build webadministration"
 
 FROM rh-registry.gazprom-neft.local:5000/rhel8/nginx-116
-COPY --from=build /opt/app-root/src/dist/websso /usr/share/nginx/html
+COPY --from=build /opt/app-root/src/dist/webadministration /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/
 CMD ["nginx", "-g", "daemon off;"]
