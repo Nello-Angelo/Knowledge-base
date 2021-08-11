@@ -8,37 +8,18 @@
      name: https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm 
      state: present
 
-  - shell: yum clean all
-
   - yum:
      name: "{{item}}"
      state: latest
     loop: 
       - centos-release-scl
-      - zabbix-agent
-      - iptables-services  
-
-  - systemd:
-      name: firewalld
-      state: stopped
-      enabled: no  
+      - zabbix-agent    
 
   - lineinfile:
       path: /etc/selinux/config
       regexp: '^SELINUX=enforcing'
       line: SELINUX=disabled
       firstmatch: yes
-  
-  - lineinfile:
-      path: /etc/sysconfig/iptables
-      insertafter: '^-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT'
-      line: "{{item}}"
-      firstmatch: yes 
-    loop:
-      - -A INPUT -p tcp -m tcp --dport 10050 -j ACCEPT
-      - -A INPUT -p tcp -m tcp --dport 10051 -j ACCEPT
-      - -A OUTPUT -p tcp -m tcp --dport 10050 -j ACCEPT
-      - -A OUTPUT -p tcp -m tcp --dport 10051 -j ACCEPT
 
   - lineinfile:
       path: /etc/zabbix/zabbix_agentd.conf
@@ -63,13 +44,16 @@
       regexp: '^Hostname=Zabbix server'
       line: Hostname=имя хоста
       firstmatch: yes
-  
+ 
+  - firewalld:
+      port: 10050-10051/tcp
+      permanent: yes
+      immediate: yes
+      state: enabled
+ 
   - systemd:
-      name: "{{item}}"
+      name: zabbix-agent
       state: started
-      enabled: yes  
-    loop:
-      - iptables
-      - zabbix-agent 
+      enabled: yes   
  
   - shell: reboot
