@@ -272,6 +272,13 @@
      enabled: yes (активируем репо)
      state: present (статус репо - absent чтобы удалить)
 
+  - rpm_key: 
+     state: present 
+     key: " {{item}} " 
+    loop:
+     - https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591
+     - https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX
+
   - name: Install (имя задания)
     grafana_plugin: (модуль управления плагинами)
      grafana_plugin_url: https://storage.googleapis.com/plugins-community/alexanderzobnin-zabbix-app/release/4.1.5/alexanderzobnin-zabbix-app-4.1.5.zip (можно дополнительно указать url)
