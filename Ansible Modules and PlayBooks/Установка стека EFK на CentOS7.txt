@@ -17,6 +17,16 @@
       autorefresh=1
       type=rpm-md
 
+  - name: Add repository
+    yum_repository:
+     name: td-agent-bit
+     description: td-agent-bit
+     baseurl: https://packages.fluentbit.io/centos/7/$basearch/
+     gpgkey: https://packages.fluentbit.io/fluentbit.key
+     gpgcheck: yes
+     enabled: yes
+     state: present
+
   - yum:
      name: "{{item}}"
      state: latest
@@ -26,6 +36,7 @@
      - httpd-tools 
      - elasticsearch
      - kibana
+     - td-agent-bit
 
   - lineinfile:
       path: /etc/selinux/config
@@ -116,22 +127,15 @@
      executable: /bin/bash 
 
   - firewalld:
-      port: 9200/tcp
+      port: "{{item}}"
       permanent: yes
       immediate: yes
       state: enabled
-
-  - firewalld:
-      port: 5601/tcp
-      permanent: yes
-      immediate: yes
-      state: enabled
-
-  - firewalld:
-      port: 80/tcp
-      permanent: yes
-      immediate: yes
-      state: enabled
+    loop:
+      - 9200/tcp
+      - 5601/tcp
+      - 80/tcp
+      - 2020/tcp
 
   - name: start
     systemd:
@@ -142,5 +146,6 @@
       - elasticsearch
       - kibana
       - nginx
+      - td-agent-bit
 
   - shell: reboot
