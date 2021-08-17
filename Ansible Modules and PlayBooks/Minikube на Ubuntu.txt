@@ -1,0 +1,76 @@
+---
+- name: install
+  hosts: maylo
+  become: yes
+
+  tasks:
+  - file:
+      path: /usr/local/bin/kubectl
+      state: directory
+      owner: root
+      group: root
+      mode: '755'
+
+  - apt:
+     name: curl
+     state: latest
+
+  - shell: "{{item}}"
+    args:
+      executable: /bin/bash
+    loop:
+     - curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+     - echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+  - apt:
+     name: kubectl
+     update_cache: yes
+     state: latest
+
+  - apt:
+     name: "{{item}}"
+     state: latest
+    loop:
+     - apt-transport-https
+     - ca-certificates
+     - gnupg
+     - lsb-release
+
+  - shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    args:
+      executable: /bin/bash
+
+  - lineinfile:
+      path: /etc/apt/sources.list.d/docker.list
+      line: deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu   focal stable
+      create: yes
+
+  - apt:
+     name: "{{item}}"
+     update_cache: yes
+     state: latest
+    loop:
+     - docker-ce
+     - docker-ce-cli
+     - containerd.io
+
+  - systemd:
+      name: docker
+      state: started
+      enabled: yes
+
+  - shell: "{{item}}"
+    args:
+     executable: /bin/bash
+    loop:
+     - curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
+     - install minikube /usr/local/bin/
+
+  - name: add
+    user:
+     name: username
+     group: docker
+     shell: /bin/bash
+     state: present
+
+  - shell: minikube start --driver=docker
