@@ -72,5 +72,3 @@
      group: docker
      shell: /bin/bash
      state: present
-
-  - shell: minikube start --driver=docker
