@@ -29,7 +29,7 @@
       - zabbix-web-mysql
       - zabbix-apache-conf
 
-  - name: Install bottle python package
+  - name: Install PyMySQL
     pip:
       name: PyMySQL
 
