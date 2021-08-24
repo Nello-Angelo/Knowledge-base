@@ -39,6 +39,8 @@ docker run -v имя тома на хосте:/path/to/mount в контейне
 docker network create -d имя-driver имя сети (создать сеть) docker network rm имя сети (удалить сеть) docker network inspect имя сети(посмотреть сеть) docker network ls(посмотреть список)
 docker network connect/disconnect имя сети id-контейнера или имя(добавить/удалить контейнер в/из сети, это для того что бы контейнеры могли взаимодействовать в одном сетевом пространстве) 
 docker run -d -p localhostport80:containerport80 -e "port=containerport" --name имя для контейнера --network=имя сети для подключения имя образа (запустить контейтер и подключить к сети)
+docker ps --filter status=exited --all -q (выводит контейнеры статус которых "вышедший" по id контейнера, доступные значения created, restarting, running, removing, paused, exited, dead) 
+docker rm $(docker ps --filter status=exited --all -q) (удаляет вывод контейнеров статус которых "вышедший" по id контейнера)
 
 
 
