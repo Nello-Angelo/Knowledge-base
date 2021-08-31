@@ -1,0 +1,28 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: front-{{ .Values.app }}
+  labels:
+    app: gpnsm-front
+    label: gpnsm
+    service: {{ .Values.app }}
+spec:
+  nodeSelector: {}
+  output: {}
+  postCommit: {}
+  resources: {}
+  runPolicy: SerialLatestOnly
+  source:
+    git:
+      ref: {{ .Values.image.source.ref }}
+      uri: git@git.grotem.com:GPNLubricants/Frontend.git
+    sourceSecret:
+      name: grotem-git-openshift-builder
+    type: Git
+  strategy:
+    jenkinsPipelineStrategy:
+      jenkinsfilePath: Jenkinsfile/pipeline
+    type: JenkinsPipeline
+  successfulBuildsHistoryLimit: 2
+  failedBuildsHistoryLimit: 1
+  triggers: []
