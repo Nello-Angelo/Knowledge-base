@@ -1,4 +1,4 @@
-На Master Nod в активном состоянии работаю controller manager, api server, etcd и scheduler. На Worker Nod в активном состоянии работают kubelet и kube-proxy.
+На Master Nod в активном состоянии работают controller manager, api server, etcd и scheduler. На Worker Nod в активном состоянии работают kubelet и kube-proxy.
 В кластере не того кто бы мог отдавать команды напрямую каждому компоненту в kubernetes, каждый из них работает независимо друг от друга и без прямого подчинения.
 Их взаимодействие с API-сервером идет строго по индивидуальной инструкции каждого из них.
 
