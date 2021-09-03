@@ -247,7 +247,7 @@
      priv: '*.*:ALL,GRANT' (права)
      state: present (в статусе указываем что должен присутствовать)
 
-  - firewalld:
+  - firewalld: (модуль управления фаерволом)
       port: 10050-10051/tcp (можно указать диапозон или один порт и протокол, поля port: и service: определяются в разных заданиях, в одном задании можно открыть порт или добавить сервис)
       service: https (добавляем правило для сервиса и разрешаем пропускать через него трафик)
       zone: internal(Зона для добавления, удаления. Возможные значения включают block, dmz, drop, external, home, internal, public, trusted, work) (можно добавлять во всех заданиях)
@@ -272,12 +272,9 @@
      enabled: yes (активируем репо)
      state: present (статус репо - absent чтобы удалить)
 
-  - rpm_key: 
-     state: present 
-     key: " {{item}} " 
-    loop:
-     - https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591
-     - https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX
+  - rpm_key: (модуль добавления GPG-KEY)
+     state: present (статус состояния)
+     key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591 (ключ который добовляем, если ключей несколько то перечисляем в цикле)
 
   - name: Install (имя задания)
     grafana_plugin: (модуль управления плагинами)
@@ -298,10 +295,10 @@
       unit: MB (значение величины, указываем это поле только если начало и конец определяем в процентах, доступно MB, MiB, GB, GiB, TB, TiB)
       state: present (статус раздела, доступно absent, present, info)
 
-  - blockinfile:
-     path: /etc/yum.repos.d/elastic.repo
-     create: yes
-     block: |
+  - blockinfile: (модуль добавления блоков текста)
+     path: /etc/yum.repos.d/elastic.repo (путь к файлу в котором нужно добавить указанные поля)
+     create: yes (указываем что нужно создать файл и в него добавить указанные поля из поля block, если указанный файл в поле path не существует, используется без полей с выражениями)
+     block: | (ниже указываем блок строк которые нужно добавить)
       [elasticsearch]
       name=Elasticsearch repository for 7.x packages
       baseurl=https://artifacts.elastic.co/packages/7.x/yum
