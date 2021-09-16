@@ -419,13 +419,12 @@ kind: ClusterRoleBinding (тип связки для роли и сервис а
 metadata: (под ним заполняем данные о связке)
   name: admin-deploy-admin (имя связки)
 subjects: (обьекты, к которым будет привязана роль, данные поля обязательны для заполнения)
-- kind: ServiceAccount (тип обькта)
+- kind: ServiceAccount (тип обькта) (если тип User или Group то это (apiGroup: rbac.authorization.k8s.io) поле определяем вместо поля (namespace: default) а поле namespace: default определяем в рвзделе metadata:)
   name: demo-user-demon (имя сервис аккаунта)
-  apiGroup: rbac.authorization.k8s.io (api-группа, к которой принадлежит роль)
-  namespace: default (пространство имен, в котором был создан обьект, только для обычной роли указываем)
+  namespace: default (пространство имен, в котором был создан ServiceAccount, только для обычной роли указываем)
 roleRef: (заполняем данные о роли, которую привяжем к аккаунту)
   apiGroup: rbac.authorization.k8s.io (api-группа, к которой принадлежит роль)
-  kind: ClusterRole (тип роли)
+  kind: ClusterRole (тип роли которую привязываем)
   name: admin-admin (имя роли, как в манифесте)
 
 
