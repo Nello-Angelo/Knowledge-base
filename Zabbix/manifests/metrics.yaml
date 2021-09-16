@@ -3,7 +3,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: metrics-server
-  namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -22,7 +21,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: metrics-server-auth-reader
-  namespace: kube-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -43,7 +41,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: metrics-server
-    namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -74,19 +71,17 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: metrics-server
-    namespace: kube-system
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: metrics-server
-  namespace: kube-system
 spec:
   ports:
   - name: http
     port: 8080
     protocol: TCP
-    targetPort: http
+    targetPort: 80
   selector:
     app: metrics-server
 ---
@@ -97,7 +92,6 @@ metadata:
 spec:
   service:
     name: metrics-server
-    namespace: kube-system
   group: metrics.k8s.io
   version: v1beta1
   insecureSkipTLSVerify: true
@@ -108,7 +102,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: metrics-server
-  namespace: kube-system
 spec:
   selector:
     matchLabels:
@@ -149,15 +142,13 @@ spec:
         readinessProbe:
           httpGet:
             path: /readyz?exclude=livez
-            port: http
-            scheme: HTTP
+            port: 80
           periodSeconds: 10
           failureThreshold: 3
         livenessProbe:
           httpGet:
             path: /livez?exclude=readyz
-            port: http
-            scheme: HTTP
+            port: 80
           periodSeconds: 10
           failureThreshold: 3
         securityContext:
