@@ -115,4 +115,4 @@ netstat -pnltu (показывает номер открытого порта, P
 ssh root@111.222.222.333(ssh из терминала) ssh-keygen (создать ключи) ssh-copy-id root@111.222.333.444 (закинуть публичный ключ на удаленную тачку) ip link add name dum0 type dummy (добавить интерфейс)
 ip route add 192.168.43.0/24 via 192.168.43.1 dev имя сетевухи (добавить маршрут через который будет идти трафик до перезагрузки, это может быть другая сетевая карта или роутер)
 ip link set dev ens33 up/down mtu 1500 (вк/выкл устройства) (строчкой ниже указаны поля которые нужно либо изменить, либо добавить в файл если хотим задать статические настройки)
-BOOTPROTO=static IPADDR=10.16.103.52 PREFIX=24 GATEWAY=10.16.103.1 DNS1=8.8.8.8 DNS2=8.8.4.4 ONBOOT=yes (редактировать в файле по пути /etc/sysconfig/network-scripts/ifcfg-имя сетевухи)
+BOOTPROTO=static IPADDR=10.16.103.52 PREFIX=24 GATEWAY=10.16.103.1 DNS1=8.8.8.8 DNS2=8.8.4.4 ONBOOT=yes ZONE=public  DOMAIN=cluster.local (редактировать в файле по пути /etc/sysconfig/network-scripts/ifcfg-имя сетевухи)
