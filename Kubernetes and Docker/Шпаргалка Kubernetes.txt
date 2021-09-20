@@ -393,6 +393,77 @@ spec: (это поле называется спецификация)
            type: Directory (тип тома) 
 
 
+ПРИМЕР КОНФИГУРАЦИИ StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: nexus
+    namespace: nexus
+    labels:
+      app: nexus
+      section: tools
+spec:
+  selector:
+    matchLabels:
+      app: nexus
+      section: tools
+  serviceName: nexus
+  template:
+    metadata:
+      labels:
+        app: nexus
+        section: tools
+    spec:
+      containers:
+        - name: nexus
+          image: sonatype/nexus3:3.27.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+            - containerPort: 8083
+              protocol: TCP
+          env:
+            - name: INSTALL4J_ADD_VM_PARAMS
+              value: "-Xms2g -Xmx2g -XX:MaxDirectMemorySize=3g"
+            # - name: NEXUS_CONTEXT
+            #  value: nexus
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 6
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "2Gi"
+              cpu: "2"
+          volumeMounts:
+            - mountPath: /nexus-data
+              name: nexus-data
+  volumeClaimTemplates:
+  - metadata:
+      name: nexus-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "managed-nfs-storage"
+      resources:
+        requests:
+          storage: 8Gi
+
+
+
 ПРИМЕР КОНФИГУРАЦИИ ПРОСТОГО ServiceAccount
 apiVersion: v1 (версия api зависит от типа службы)
 kind: ServiceAccount (тип службы, которую мы создаем)
@@ -418,8 +489,9 @@ apiVersion: rbac.authorization.k8s.io/v1 (версия api зависит от �
 kind: ClusterRoleBinding (тип связки для роли и сервис аккаунта)
 metadata: (под ним заполняем данные о связке)
   name: admin-deploy-admin (имя связки)
+  namespace: default (пространство имен, в котором создаем привязку)
 subjects: (обьекты, к которым будет привязана роль, данные поля обязательны для заполнения)
-- kind: ServiceAccount (тип обькта) (если тип User или Group то это (apiGroup: rbac.authorization.k8s.io) поле определяем вместо поля (namespace: default) а поле namespace: default определяем в рвзделе metadata:)
+- kind: ServiceAccount (тип обькта) (если тип User или Group то это (apiGroup: rbac.authorization.k8s.io) поле определяем вместо поля (namespace: default) в разделе subjects:)
   name: demo-user-demon (имя сервис аккаунта)
   namespace: default (пространство имен, в котором был создан ServiceAccount, только для обычной роли указываем)
 roleRef: (заполняем данные о роли, которую привяжем к аккаунту)
