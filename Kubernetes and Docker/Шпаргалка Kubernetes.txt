@@ -462,8 +462,8 @@ metadata: (под ним заполняем данные о роли)
   name: admin-admin (имя роли)
   namespace: default (пространство имен, в котором был создан обьект, только для обычной роли указываем)
 rules: (ниже указывам список того, к чему будет иметь доступ тот аккаунт, к которому будет привязана эта роль)
-- apiGroups: ["", "extensions", "apps"] (api-группы)
-  resources: ["deployments", "replicasets", "pods", "services", "nodes", "nodes/stats", "namespaces"] (модули)
+- apiGroups: ["", "extensions", "apps"] (api-группы модулей)
+  resources: ["deployments", "replicasets", "pods", "services", "nodes", "nodes/stats", "namespaces"] (модули, ноды и пространства имен, ноды и пространства указываются только в ClusterRole)
   verbs: ["list", "create", "update", "patch", "delete"] (выражения, которые можно использовать для управления состоянием кластера)
 
   
