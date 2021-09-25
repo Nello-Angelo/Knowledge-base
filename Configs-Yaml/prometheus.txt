@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prometheus
+  namespace: metrics
+  labels:
+    app.kubernetes.io/created-by: resource-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: prometheus
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: prometheus
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config
+            defaultMode: 420
+        - name: rules
+          configMap:
+            name: prometheus-rules
+            defaultMode: 420
+        - name: data
+          emptyDir: {}
+      initContainers:
+        - name: chown
+          image: 'docker.io/alpine:3.12'
+          command:
+            - chown
+            - '-R'
+            - '65534:65534'
+            - /var/lib/prometheus
+          resources: {}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/prometheus
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      containers:
+        - name: prometheus
+          image: 'quay.io/prometheus/prometheus:v2.27.1'
+          args:
+            - '--web.listen-address=0.0.0.0:9090'
+            - '--config.file=/etc/prometheus/prometheus.yaml'
+            - '--storage.tsdb.path=/var/lib/prometheus'
+            - '--storage.tsdb.retention.time=2d'
+            - '--storage.tsdb.retention.size=5GB'
+            - '--storage.tsdb.min-block-duration=2h'
+            - '--storage.tsdb.max-block-duration=2h'
+          ports:
+            - name: web
+              containerPort: 9090
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+            - name: rules
+              mountPath: /etc/prometheus/rules
+            - name: data
+              mountPath: /var/lib/prometheus
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 9090
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9090
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: prometheus
+      serviceAccount: prometheus
+      securityContext: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+              - matchExpressions:
+                  - key: beta.kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+      schedulerName: default-scheduler
+  serviceName: prometheus
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+  revisionHistoryLimit: 10
