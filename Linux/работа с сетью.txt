@@ -104,6 +104,38 @@ host maylo {
 }
 }
 
+-----------------alternatives configs------------------
+uthoritative;
+ddns-update-style interim;
+default-lease-time 14400;
+max-lease-time 14400;
+
+        option routers                  192.168.1.100;
+        option broadcast-address        192.168.1.255;
+        option subnet-mask              255.255.255.0;
+        option domain-name-servers      192.168.1.100, 192.168.1.120;
+        option domain-name              "okd.local";
+
+        subnet 192.168.1.0 netmask 255.255.255.0 {
+        interface ens192;
+        pool {
+                range 192.168.1.101 192.168.1.130;
+                # Static entries
+                host okd-m1 { hardware ethernet 00:0c:29:0a:c8:15; fixed-address 192.168.1.101; }
+                host okd-m2 { hardware ethernet 00:0c:29:28:66:85; fixed-address 192.168.1.102; }
+                host okd-m3 { hardware ethernet 00:0c:29:33:fb:5a; fixed-address 192.168.1.103; }
+                host okd-c1 { hardware ethernet 00:0c:29:b1:5b:98; fixed-address 192.168.1.104; }
+                host okd-c2 { hardware ethernet 00:0c:29:95:7b:c5; fixed-address 192.168.1.105; }
+                host okd-c3 { hardware ethernet 00:0c:29:81:47:57; fixed-address 192.168.1.106; }
+                host okd-c5 { hardware ethernet 00:0c:29:4d:2a:51; fixed-address 192.168.1.107; }
+                host okd-nfs { hardware ethernet 00:0c:29:75:5f:01; fixed-address 192.168.1.112; }
+                host ad-comp1 { hardware ethernet 00:0c:29:21:dc:84; fixed-address 192.168.1.119; }
+                host ad { hardware ethernet 00:0c:29:b7:6e:bb; fixed-address 192.168.1.120; }
+                # this will not give out addresses to hosts not listed above
+                deny unknown-clients;
+        }
+}
+
 -------------------------------------------------------------------------------------------------------------Сетевые утилиты и команды---------------------------------------------------------------------------------------------
 nmcli connection reload(перезагрузка всей кофигурации после изменений в файлах /etc/sysconfig/network-scripts/ifcfg-имя сетевухи и прочие файлы или /etc/NetworkManager/прочие файлы)
 nmcli -p device status (посмотреть состояние интерфейсов) nmcli -p general status(Состояние NetworkManager) nmcli connection show(покажет NAME, UUID, TYPE, DEVICE это - Профиль connection)
