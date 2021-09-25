@@ -1,3 +1,18 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: node-exporter
+  namespace: metrics
+spec:
+  selector:
+    app: node-exporter
+  ports:
+  - name: node-exporter
+    protocol: TCP
+    port: 9100
+    targetPort: 9100
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -62,12 +77,9 @@ spec:
             - name: root
               readOnly: true
               mountPath: /host/root
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
-      dnsPolicy: ClusterFirst
       hostPID: true
       securityContext:
         runAsUser: 65534
@@ -94,4 +106,3 @@ spec:
     rollingUpdate:
       maxUnavailable: 1
       maxSurge: 0
-  revisionHistoryLimit: 10
