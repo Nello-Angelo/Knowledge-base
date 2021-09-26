@@ -1,3 +1,26 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metrica
+  labels:
+    app.kubernetes.io/name: metrica
+    kubernetes.io/metadata.name: metrica
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/name: kube-state-metrics
+  name: kube-state-metrics
+subjects:
+  - kind: ServiceAccount
+    name: kube-state-metrics
+    namespace: metrica
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kube-state-metrics
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -118,23 +141,24 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  labels:
+    app.kubernetes.io/name: kube-state-metrics
   name: kube-state-metrics
   namespace: metrica
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  metadata:
   labels:
     app.kubernetes.io/name: kube-state-metrics
   name: kube-state-metrics
   namespace: metrica
 spec:
+  clusterIP: None
   ports:
-    - name: metrics
-      protocol: TCP
-      port: 8080
-      targetPort: 8080
+  - name: http-metrics
+    port: 8080
+    targetPort: 8080
   selector:
     app.kubernetes.io/name: kube-state-metrics
 ---
