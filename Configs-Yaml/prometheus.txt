@@ -275,9 +275,6 @@ spec:
         - name: prometheus-config-volume
           configMap:
             name: prometheus-config
-        - name: rules
-          configMap:
-            name: prometheus-rules
   volumeClaimTemplates:
     - metadata:
         name: data
