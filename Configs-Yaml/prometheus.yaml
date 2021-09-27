@@ -18,7 +18,7 @@ data:
         static_configs:
           - targets: ['localhost:9090']
 
-      # Метрики API сервера ===============================================
+      
       - job_name: 'kubernetes-apiservers'
         kubernetes_sd_configs:
         - role: endpoints
@@ -36,7 +36,7 @@ data:
           action: keep
           regex: kubernetes;https
 
-      # Kubelet ===========================================================================
+      
       - job_name: 'kubernetes-nodes'
         kubernetes_sd_configs:
         - role: node
@@ -51,7 +51,7 @@ data:
         - action: labelmap
           regex: __meta_kubernetes_node_label_(.+)
 
-      #==========================================================================
+      
       - job_name: 'kubernetes-cadvisor'
         kubernetes_sd_configs:
         - role: node
@@ -67,7 +67,7 @@ data:
         - action: labelmap
           regex: __meta_kubernetes_node_label_(.+)
 
-      #==========================================================================
+      
       - job_name: 'kubernetes-coredns'
         kubernetes_sd_configs:
         - role: pod
@@ -83,7 +83,7 @@ data:
           action: keep
           regex: 9153
 
-      #==========================================================================
+      
       - job_name: 'kubernetes-nodelocaldns'
         kubernetes_sd_configs:
         - role: pod
@@ -99,7 +99,7 @@ data:
           action: keep
           regex: 9253
 
-      #=========================================================================
+      
       - job_name: 'kube-controller'
         #honor_labels: true
         kubernetes_sd_configs:
@@ -123,7 +123,7 @@ data:
           regex: (.+?)(\\:\\d+)?
           replacement: $1:10257
 
-      #=========================================================================
+      
       - job_name: 'kube-scheduller'
         #honor_labels: true
         kubernetes_sd_configs:
@@ -147,7 +147,7 @@ data:
           regex: (.+?)(\\:\\d+)?
           replacement: $1:10259
 
-      #=========================================================================
+      
       - job_name: 'node-exporter'
         kubernetes_sd_configs:
           - role: endpoints
