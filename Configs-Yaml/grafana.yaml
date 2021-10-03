@@ -7,7 +7,7 @@ data:
   grafana.ini: |-
     [server]
     domain = claster.local
-    http_ports = 31480
+    http_ports = 30480
     root_url = %(protocol)s://%(domain)s:%(http_port)s/grafana/
     serve_from_sub_path = true
 ---
@@ -84,7 +84,8 @@ spec:
           - name: data
             mountPath: /var/lib/grafana
           - name: grafana-ini
-            mountPath: /etc/grafana/
+            mountPath: /etc/grafana/grafana.ini
+            subPath: grafana.ini
       volumes:
         - name: grafana-ini
           configMap:
