@@ -4,7 +4,7 @@ metadata:
   name: grafana-ini
   namespace: metrica
 data:
-  grafana.ini: |-
+  grafana.ini: |
     [server]
     domain = cluster.local
     http_ports = 30480
