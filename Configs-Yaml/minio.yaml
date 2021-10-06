@@ -80,17 +80,6 @@ spec:
         prometheus.io/port: "9000"
     spec:
       affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: mi
-                    app.kubernetes.io/instance: mi
-                namespaces:
-                  - "minio"
-                topologyKey: kubernetes.io/hostname
-              weight: 100
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
