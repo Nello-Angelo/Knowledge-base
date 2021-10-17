@@ -129,7 +129,6 @@ spec: (это поле называется спецификация)
               beta.kubernetes.io/os: linux (эта метка означает, что нужно запускать поды только на хостах с Linux ОС)
               disk: ssd (эта метка означает, что нужно запускать поды только на хостах, у которых метка SSD)(метки, которые относятся хостам могуть быть любые)
            securityContext: (параметры безопасности)
-              readOnlyRootFilesystem: true (файловая система root только для чтения)
               runAsNonRoot: true (не запускать от имени root)
               runAsUser: 1000 (запустить процесс под таким UID, можешь указать любой)
               runAsGroup: 1000 (запустить процесс под таким GID, можешь указать любой)
@@ -307,56 +306,8 @@ data: (ниже описываем переменные и значения ко
   oidc__TokenUrl: http://any/path/site (переменная и значение)
 
 
-ПРИМЕР КОНФИГУРАЦИИ DaemonSet
-apiVersion: apps/v1 (версия api зависит от типа службы)
-kind: DaemonSet (тип службы, которую мы создаем)
-metadata: (под ним заполняем данные о службе)
-  name: fluentd-elasticsearch (имя службы)
-  labels: (это метка, имя метки и ее значение может быть любым)
-    k8s-app: fluentd-logging (метка)
-spec: (это поле называется спецификация)
-  selector: (селектор помогает daemonset понять, какие поды пренадлежат ему, метка в селекторе и в шаблоне должы быть одинаковые)
-    matchLabels: (селектор matchLabels сопостовляет свои метки с полем labels из пода в разделе шаблона)
-      name: fluentd-elasticsearch (это метка)
-  updateStrategy: (стратегия обновления)
-    type: RollingUpdate (обновляет только по заданному кол-во по очереди, нет простоя) и Recreate (сначала удалит старые и только потом создаст новые, имеет простой)
-    rollingUpdate:  (ниже задаются параметры обновления, они доступны только если тип стоит rollingupdate, у recreate нет параметров, задается только тип)
-      maxUnavailable: 1 (кол-во одновременно удаляемых подов)
-  template: (это шаблон, под ним описываем то, какие контейнеры нужно создать)
-    metadata: (под ним заполняем данные о службе)
-      labels: (это метка, имя метки и ее значение может быть любым)
-        name: fluentd-elasticsearch (метка)
-    spec: (это поле называется спецификация) 
-      containers: (под ним создаем описание с заполнением полей для контейнеров)
-      - name: fluentd-elasticsearch (имя контейнера)
-        image: quay.io/fluentd_elasticsearch/fluentd:v2.5.2 (образ программы)
-        ports: (порт приложения)
-         - containerPort: 80 (указываем порт)
-           protocol: TCP (протокол по которому будут передаваться данные)
-        resources: (ниже описываем то, сколько ресурсов нужно выделить для пода, и запомни, если ты запросил больше, чем есть на сервере, то деплой будет всегда в ожидании)
-          requests: (запрос на выделение ресурсов, под ним указываем какие параметры и в каком обьеме выделить)
-            cpu: 1000m (процессор)
-            memory: 1000Mi (оперативная память)
-          limits: (предел обьема ресурсов, который можно выделить, под ним указываем какие параметры и до какого предела ограничить)
-            memory: 1000Mi (оперативная память)
-            cpu: 1000m (процессор)
-        volumeMounts: (под ним описываем пути монтирования в контейнере)
-        - name: root (имя тома должно совпадать с разделом volumes:)
-          mountPath: /root (точка монтирования, если ее не существует то кубернетес создаст ее)
-        - name: varlog (имя тома должно совпадать с разделом volumes:)
-          mountPath: /var/log (точка монтирования, если ее не существует то кубернетес создаст ее)
-        - name: varlibdockercontainers (имя тома должно совпадать с разделом volumes:)
-          mountPath: /var/lib/docker/containers (точка монтирования, если ее не существует то кубернетес создаст ее)
-          readOnly: true (политика - только для чтения)
-      hostNetwork: true 
-      hostPID: true
-      securityContext: (параметры безопасности)
-        runAsNonRoot: true (не запускать от имени root)
-        runAsUser: 1000 (запустить процесс под таким UID, можешь указать любой)
-        runAsGroup: 1000 (запустить процесс под таким GID, можешь указать любой)
-      nodeSelector:  (селектор нод, то есть, хостового узла, как способ определения на какой ноде размещать поды, но можно и через афинити)
-        beta.kubernetes.io/os: linux (эта метка означает, что нужно запускать поды только на хостах с Linux ОС)
-        disk: ssd (эта метка означает, что нужно запускать поды только на хостах, у которых метка SSD)(метки, которые относятся хостам могуть быть любые)
+
+      
       tolerations: (ниже описываем толерантность к размещению подов на хостах)
       - effect: NoSchedule(NoSchedule-запрещает размещать на узле, PreferNoSchedule-размещает на узле если нельзя где-то еще, NoExecute-выселяет с узла уже запущенные pod, NodeCondition-действует для узлов отвечающих заданному условию)
         operator: Exists(указываем что pod должен создаваться на хостах у которых поле taints: NoSchedule, это поле можно найти если сделать describe хоста)(поле effect: в манифесте это значение в поле taints: из вывода describe хоста) 
@@ -376,65 +327,7 @@ spec: (это поле называется спецификация)
            type: Directory (тип тома) 
 
 
-ПРИМЕР КОНФИГУРАЦИИ StatefulSet
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-    name: nexus
-    namespace: nexus
-    labels:
-      app: nexus
-      section: tools
-spec:
-  selector:
-    matchLabels:
-      app: nexus
-      section: tools
-  serviceName: nexus
-  template:
-    metadata:
-      labels:
-        app: nexus
-        section: tools
-    spec:
-      containers:
-        - name: nexus
-          image: sonatype/nexus3:3.27.0
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8081
-              protocol: TCP
-            - containerPort: 8083
-              protocol: TCP
-          env:
-            - name: INSTALL4J_ADD_VM_PARAMS
-              value: "-Xms2g -Xmx2g -XX:MaxDirectMemorySize=3g"
-            # - name: NEXUS_CONTEXT
-            #  value: nexus
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8081
-            initialDelaySeconds: 30
-            periodSeconds: 30
-            failureThreshold: 6
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8081
-            initialDelaySeconds: 30
-            periodSeconds: 30
-            failureThreshold: 6
-          resources:
-            requests:
-              memory: "2Gi"
-              cpu: "1"
-            limits:
-              memory: "2Gi"
-              cpu: "2"
-          volumeMounts:
-            - mountPath: /nexus-data
-              name: nexus-data
+
   volumeClaimTemplates:
   - metadata:
       name: nexus-data
