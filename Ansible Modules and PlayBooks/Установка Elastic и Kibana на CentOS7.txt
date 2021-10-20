@@ -44,6 +44,12 @@
       regexp: '^#node.name: node-1'
       line: 'node.name: hostname'
       firstmatch: yes
+  
+  - lineinfile:
+      path: /etc/elasticsearch/elasticsearch.yml
+      regexp: '^path.data: /var/lib/elasticsearch'
+      line: 'path.data: /path/to/save-data' 
+      firstmatch: yes
 
   - lineinfile:
       path: /etc/elasticsearch/elasticsearch.yml
@@ -136,4 +142,4 @@
       - kibana
       - nginx
 
-  - shell: reboot
+  - shell: reboot  
