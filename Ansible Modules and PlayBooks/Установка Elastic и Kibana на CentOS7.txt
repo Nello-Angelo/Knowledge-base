@@ -4,6 +4,39 @@
   become: yes
 
   tasks:
+  - parted:
+      device: /dev/sdb
+      number: 1
+      label: gpt
+      flags: [ lvm ]
+      part_start: 1MB
+      part_end: 549000MB
+      part_type: primary
+      state: present
+   
+  - lvg:
+      vg: elastic
+      pvs: /dev/sdb1
+      state: present
+
+  - lvol:
+      vg: elastic
+      lv: elasticsearch
+      size: 100%FREE
+    
+  - filesystem:
+      fstype: xfs
+      dev: /dev/mapper/elastic-elasticsearch
+
+  - shell: mkdir /var/data 
+ 
+  - mount: 
+      path: /var/data
+      src: /dev/mapper/elastic-elasticsearch
+      fstype: xfs
+      opts: defaults 
+      state: mounted
+
   - blockinfile:
      path: /etc/yum.repos.d/elastic.repo
      create: yes
