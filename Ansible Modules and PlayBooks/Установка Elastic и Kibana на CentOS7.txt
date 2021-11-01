@@ -55,8 +55,6 @@
      state: latest
     loop:
      - java
-     - nginx
-     - httpd-tools 
      - elasticsearch
      - kibana
 
