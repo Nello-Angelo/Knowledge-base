@@ -80,12 +80,6 @@
   
   - lineinfile:
       path: /etc/elasticsearch/elasticsearch.yml
-      regexp: '^path.data: /var/lib/elasticsearch'
-      line: 'path.data: /path/to/save-data' 
-      firstmatch: yes
-
-  - lineinfile:
-      path: /etc/elasticsearch/elasticsearch.yml
       regexp: '^#network.host: 192.168.0.1'
       line: 'network.host: ip-address'
       firstmatch: yes
@@ -149,10 +143,6 @@
       regexp: '^#elasticsearch.hosts: \["http://localhost:9200"\]'
       line: 'elasticsearch.hosts: ["http://ip-address:9200"]'
       firstmatch: yes
-       
-  - shell: htpasswd -bc /etc/nginx/htpasswd.users username password
-    args:
-     executable: /bin/bash 
 
   - firewalld:
       port: "{{item}}"
@@ -162,8 +152,6 @@
     loop:
       - 9200/tcp
       - 5601/tcp
-      - 80/tcp
-      - 443/tcp
 
   - name: start
     systemd:
@@ -173,6 +161,5 @@
     loop:
       - elasticsearch
       - kibana
-      - nginx
 
   - shell: reboot  
