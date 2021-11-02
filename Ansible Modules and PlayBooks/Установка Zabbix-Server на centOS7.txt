@@ -93,17 +93,13 @@
      - rh-php72-php-fpm
 
   - firewalld:
-      port: 10050-10051/tcp
+      port: "{{item}}"
       permanent: yes
       immediate: yes
       state: enabled
-   
-  - firewalld:
-      service: "{{item}}"
-      permanent: yes
-      state: enabled
     loop:
-     - https
-     - http
+     - 443/tcp
+     - 80/tcp
+     - 10050/tcp
 
   - shell: reboot
