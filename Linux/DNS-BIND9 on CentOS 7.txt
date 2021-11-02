@@ -1,0 +1,48 @@
+------------------------------------------Прямая зона-------------------------------------------
+$TTL    604800
+@       IN      SOA     ansible.kuber.local. admin.kuber.local. (
+                  5     ; Serial
+             604800     ; Refresh
+              86400     ; Retry
+            2419200     ; Expire
+             604800     ; Negative Cache TTL
+)
+
+; name servers - NS records
+    IN      NS      ansible
+
+; name servers - A records
+ansible.kuber.local.          IN      A      192.168.80.139
+
+; VM PTR records
+elastic.kuber.local.          IN      A      192.168.80.137
+
+----------------------------------------Обратная зона--------------------------------------------
+$TTL    604800
+@       IN      SOA     ansible.kuber.local. admin.kuber.local. (
+                  6     ; Serial
+             604800     ; Refresh
+              86400     ; Retry
+            2419200     ; Expire
+             604800     ; Negative Cache TTL
+)
+
+; name servers - NS records
+       IN    NS     ansible.okd.local.
+
+; name servers - PTR records
+139    IN    PTR    ansible.okd.local.
+
+; VM PTR records
+137    IN    PTR    elastic.kuber.local.
+
+------------------------------------------Описание зон named.conf.local----------------------------------------------
+zone "kuber.local" {
+    type master;
+    file "/etc/named/zones/kuber.local"; # zone file path
+};
+
+zone "80.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/named/zones/192.168.80";
+};
