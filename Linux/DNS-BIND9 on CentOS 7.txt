@@ -8,14 +8,13 @@ $TTL    604800
              604800     ; Negative Cache TTL
 )
 
-; name servers - NS records
-    IN      NS      ansible
+@       IN      NS     ansible
 
 ; name servers - A records
-ansible.kuber.local.          IN      A      192.168.80.139
+ansible          IN      A      192.168.80.139
 
 ; VM PTR records
-elastic.kuber.local.          IN      A      192.168.80.137
+elastic          IN      A      192.168.80.137
 
 ----------------------------------------Обратная зона--------------------------------------------
 $TTL    604800
@@ -27,11 +26,10 @@ $TTL    604800
              604800     ; Negative Cache TTL
 )
 
-; name servers - NS records
-       IN    NS     ansible.okd.local.
+@      IN    NS     ansible.kuber.local.
 
 ; name servers - PTR records
-139    IN    PTR    ansible.okd.local.
+139    IN    PTR    ansible.kuber.local.
 
 ; VM PTR records
 137    IN    PTR    elastic.kuber.local.
