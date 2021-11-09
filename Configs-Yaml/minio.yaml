@@ -3,7 +3,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: mi
-  namespace: minio
   labels:
     app.kubernetes.io/name: mi
     app.kubernetes.io/instance: mi
@@ -16,7 +15,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mi-headless
-  namespace: minio
   labels:
     app.kubernetes.io/name: mi
     app.kubernetes.io/instance: mi
@@ -36,7 +34,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mi
-  namespace: minio
   labels:
     app.kubernetes.io/name: mi
     app.kubernetes.io/instance: mi
@@ -54,7 +51,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mi
-  namespace: minio
   labels:
     app.kubernetes.io/name: mi
     app.kubernetes.io/instance: mi
@@ -75,15 +71,6 @@ spec:
         prometheus.io/path: "/minio/v2/metrics/cluster"
         prometheus.io/port: "9000"
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: minio
-                    operator: In
-                    values:
-                      - "yes"
       containers:
         - name: minio
           image: quay.io/bitnami/minio:2021.6.17-debian-10-r14
@@ -153,7 +140,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: console
-  namespace: minio
   labels:
     name: console
 spec:
@@ -169,7 +155,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: console
-  namespace: minio
 spec:
   replicas: 1
   selector:
