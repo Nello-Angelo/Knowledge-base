@@ -23,6 +23,7 @@
       vg: elastic
       lv: elasticsearch
       size: 100%FREE
+      active: yes
     
   - filesystem:
       fstype: xfs
