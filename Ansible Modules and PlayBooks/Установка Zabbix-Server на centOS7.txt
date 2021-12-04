@@ -1,5 +1,5 @@
 ---
-- name: install                     #предпологается что на сервере уже установлен epel-release и сделан upgrade системы и она работает на свежем ядре   
+- name: install     
   hosts: hostname   
   become: yes
 
