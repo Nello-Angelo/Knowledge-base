@@ -46,7 +46,7 @@
       firstmatch: yes
  
   - firewalld:
-      port: 10050-10051/tcp
+      port: 10050/tcp
       permanent: yes
       immediate: yes
       state: enabled
