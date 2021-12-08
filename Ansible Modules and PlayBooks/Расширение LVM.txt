@@ -1,0 +1,26 @@
+---
+- name: install
+  hosts: hostname
+  become: yes
+
+  tasks:
+  - parted:
+      device: /dev/sdb
+      number: 1
+      label: msdos
+      flags: [ lvm ]
+      part_start: 1MB
+      part_end: 75000MB
+      part_type: primary
+      state: present
+
+  - lvg:
+      vg: centos
+      pvs: /dev/sda2,/dev/sdb1
+
+  - lvol:
+      vg: centos
+      lv: root
+      size: +100%FREE
+      resizefs: true
+      active: yes
