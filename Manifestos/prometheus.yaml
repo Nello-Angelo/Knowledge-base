@@ -1,0 +1,294 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: metrica
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval:     15s
+      external_labels:
+        monitor: 'k8s-dev-monitor'
+
+    scrape_configs:
+      - job_name: 'prometheus'
+        scrape_interval: 15s
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['localhost:9090']
+
+      
+      - job_name: 'kubernetes-apiservers'
+        kubernetes_sd_configs:
+        - role: endpoints
+          namespaces:
+            names:
+              - default
+
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_namespace,__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+          action: keep
+          regex: kubernetes;https
+
+      
+      - job_name: 'kubernetes-nodes'
+        kubernetes_sd_configs:
+        - role: node
+
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+        relabel_configs:
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+
+      
+      - job_name: 'kubernetes-cadvisor'
+        kubernetes_sd_configs:
+        - role: node
+
+        scheme: https
+        metrics_path: /metrics/cadvisor
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+        relabel_configs:
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+
+      
+      - job_name: 'kubernetes-coredns'
+        kubernetes_sd_configs:
+        - role: pod
+          namespaces:
+            names:
+              - kube-system
+
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_pod_name]
+          action: keep
+          regex: coredns-.*
+        - source_labels: [__meta_kubernetes_pod_container_port_number]
+          action: keep
+          regex: 9153
+
+      
+      - job_name: 'kubernetes-nodelocaldns'
+        kubernetes_sd_configs:
+        - role: pod
+          namespaces:
+            names:
+              - kube-system
+
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_pod_name]
+          action: keep
+          regex: nodelocaldns-.*
+        - source_labels: [__meta_kubernetes_pod_container_port_number]
+          action: keep
+          regex: 9253
+
+      
+      - job_name: 'kube-controller'
+        #honor_labels: true
+        kubernetes_sd_configs:
+        - role: pod
+          namespaces:
+            names:
+            - kube-system
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_pod_name]
+          action: keep
+          regex: 'kube-controller-.*'
+        - source_labels: [__address__]
+          action: replace
+          target_label: __address__
+          regex: (.+?)(\\:\\d+)?
+          replacement: $1:10257
+
+      
+      - job_name: 'kube-scheduller'
+        #honor_labels: true
+        kubernetes_sd_configs:
+        - role: pod
+          namespaces:
+            names:
+            - kube-system
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_pod_name]
+          action: keep
+          regex: kube-scheduler-.*
+        - source_labels: [__address__]
+          action: replace
+          target_label: __address__
+          regex: (.+?)(\\:\\d+)?
+          replacement: $1:10259
+
+      
+      - job_name: 'node-exporter'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_endpoints_name]
+          regex: 'node-exporter'
+          action: keep
+
+      - job_name: 'kube-state-metrics'
+        static_configs:
+          - targets: ['kube-state-metrics.metrica.svc.cluster.local:8080']
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/metrics
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["/metrics", "/metrics/cadvisor"]
+  verbs: ["get"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: metrica
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+- kind: ServiceAccount
+  name: prometheus
+  namespace: metrica
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-sys
+  namespace: metrica
+  labels:
+    app: prometheus-sys
+spec:
+  ports:
+  - protocol: TCP
+    port: 8088
+    targetPort: 9090
+  clusterIP: None
+  selector:
+    app: prometheus-sys
+    name: prometheus
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheus-sys-connect
+  namespace: metrica
+spec:
+  selector:
+    app: prometheus-sys
+    name: prometheus
+    statefulset.kubernetes.io/pod-name: prometheus-sys-0
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9090
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prometheus-sys
+  labels:
+    app: prometheus-sys
+  namespace: metrica
+  annotations:
+    reloader.stakater.com/auto: "true"
+    configmap.reloader.stakater.com/reload: "prometheus-config"
+spec:
+  replicas: 1
+  serviceName: prometheus-sys
+  selector:
+    matchLabels:
+      app: prometheus-sys
+      name: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus-sys
+        name: prometheus
+    spec:
+      serviceAccountName: prometheus
+      containers:
+      - name: prometheus-sys
+        image: quay.io/prometheus/prometheus:v2.26.0
+        imagePullPolicy: IfNotPresent
+        args:
+          - --storage.tsdb.retention.time=2h
+          - --storage.tsdb.retention.size=8GB
+          - --config.file=/etc/prometheus/prometheus.yml
+          - --web.listen-address=0.0.0.0:9090
+          - --storage.tsdb.min-block-duration=2h
+          - --storage.tsdb.max-block-duration=2h
+          - --storage.tsdb.path=/prometheus
+          - --web.console.libraries=/usr/share/prometheus/console_libraries
+          - --web.console.templates=/usr/share/prometheus/consoles
+        volumeMounts:
+          - name: prometheus-config-volume
+            mountPath: /etc/prometheus/
+          - name: data
+            mountPath: /prometheus
+        ports:
+        - containerPort: 9090
+      volumes:
+        - name: prometheus-config-volume
+          configMap:
+            name: prometheus-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "managed-nfs-storage"
+        resources:
+          requests:
+            storage: 10Gi
