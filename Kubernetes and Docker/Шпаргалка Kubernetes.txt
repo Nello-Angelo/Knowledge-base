@@ -10,7 +10,7 @@ kubectl scale --replicas=кол-во -f имя файла (этой команд
 kubectl get replicaset (посмотреть список созданных репликасет) kubectl get replicasets (посмотреть старый и новый набор реплик после обновления деплоймента) kubectl get deployments (чтобы посмотреть список созданных деплойментов)
 kubectl delete replicaset/deployment/pod имя одного из них в ямл файле (удалит экземпляр одного из них, которые созданы)
 kubectl get all (покажет все репликасет, деплойменты и поды) kubectl get secrets (покажет все секреты в кластере)
-kubectl rollout status deployment/имя деплоймента (чтобы посмотреть состояние выкатки обновлений на ходу)
+kubectl rollout status deployment/имя деплоймента (чтобы посмотреть состояние деплоя/редеплоя в output в консоль и если упадет деплой то и команда упадет)
 kubectl rollout restart deployment/имя деплоймента (передеплоить текущую версию, рестарт пода чтобы обновить состояние приложения)
 kubectl rollout history deployment/имя деплоймента (для просмотра списка ревизий и истории изменений)
 kubectl rollout undo deployment/имя деплоймента (что бы откатиться назад к старой версии, если что-то пошло не так в новой)
