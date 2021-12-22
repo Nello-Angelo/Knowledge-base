@@ -1,0 +1,25 @@
+stages: 
+   - build
+   - deploy
+
+build_webdistributor:build:
+  stage: build
+  script:
+    - commands
+    - commands
+  only:
+    changes:
+      - projects/core-lib/**/**/**/**/**/**/**/*
+      - projects/distributor-panel/**/**/**/**/**/**/**/*
+      - tsconfig.json
+      - angular.json
+      - nginx.conf
+      - custom-webpack.config.js
+      - docker/Dockerfile
+      - .gitlab-ci.yml
+
+deploy_webdistributor:
+   stage: deploy 
+   needs: ["build_webdistributor:build"]
+   script: commands
+
