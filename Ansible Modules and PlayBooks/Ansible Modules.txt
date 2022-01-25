@@ -1,4 +1,4 @@
---- (начало любого playbook)dgnhdghndhbdfghdf
+--- (начало любого playbook)
 - name: install (имя Playbook)
   hosts: all (хост на котором будет выполнятся задание)
   become: yes (значит что нужно выполнить от root)
