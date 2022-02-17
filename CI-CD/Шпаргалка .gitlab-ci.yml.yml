@@ -2,7 +2,7 @@ stages:
    - build
    - deploy
 
-build_webadministration:
+build:
   stage: build
   script:
     - oc login -s=https://*********
@@ -17,7 +17,7 @@ build_webadministration:
       - custom-webpack.config.js
       - docker/Dockerfile
 
-deploy_webadministration:
+deploy:
   stage: deploy 
   script: oc rollout latest app -n test4 && oc rollout status deploymentconfig app -n test4 -w
   only:
@@ -30,7 +30,7 @@ deploy_webadministration:
       - custom-webpack.config.js
       - docker/Dockerfile
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-image: mcr.microsoft.com/dotnet/sdk:5.0
+image: mcr.microsoft.com/dotnet/sdk:6.0
 
 variables:
   TELEGRAM_API_URL: "https://api.telegram.org/botтокенбота/sendMessage"
@@ -39,16 +39,12 @@ variables:
   MSG_ERROR: "Build or Publish: ❌$1%0A%0AProject:+$CI_PROJECT_NAME%0APipeline_URL:+$CI_PROJECT_URL/pipelines/$CI_PIPELINE_ID/%0ABranch:+$CI_COMMIT_REF_SLUG"
   TELEGRAM_CHAT_ID: "чат id"
 
-default:
-  tags:
-    - box
-
 stages:
   - build
   - publish
   - notify
 
-build_Grotem_Box:
+build:
   stage: build
   script: 
     - dotnet restore
@@ -64,7 +60,7 @@ build_Grotem_Box:
       - master
       - merge_requests
 
-publish_Grotem_Box:
+publish:
   stage: publish
   script: 
     - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
@@ -76,7 +72,7 @@ publish_Grotem_Box:
     refs:
       - master
 
-notify_error_Grotem_Box:
+notify_error:
   stage: notify
   script:
    - curl -s -d "chat_id=$TELEGRAM_CHAT_ID&disable_web_page_preview=1&text=$MSG_ERROR" $TELEGRAM_API_URL > /dev/null
@@ -100,9 +96,68 @@ build:
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - |
-      /kaniko/executor --context $CI_PROJECT_DIR \
+      /kaniko/executor --context $CI_PROJECT_DIR \ (путь относительно которого выполняются команды в докер-файле)
       --dockerfile $CI_PROJECT_DIR/Dockerfile \
       --destination ${CI_REGISTRY_IMAGE}:latest \
       --destination ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
   rules:
     - if: $CI_COMMIT_TAG
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+stages:
+  - prebuild
+  - build_and_push
+  - notify_success
+  - notify_error
+
+prebuild:
+  stage: prebuild
+  image:
+    name: gcr.io/kaniko-project/executor:v1.6.0-debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - |
+      /kaniko/executor --context $CI_PROJECT_DIR \ (путь относительно которого выполняются команды в докер-файле)
+      --dockerfile $CI_PROJECT_DIR/build/Dockerfile --no-push
+  only:
+    refs:
+      - merge_requests
+
+build_push:
+  stage: build_and_push
+  image:
+    name: gcr.io/kaniko-project/executor:v1.6.0-debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - |
+      /kaniko/executor --context $CI_PROJECT_DIR \ (путь относительно которого выполняются команды в докер-файле)
+      --dockerfile $CI_PROJECT_DIR/build/Dockerfile \
+      --destination ${CI_REGISTRY}:$CI_COMMIT_TAG \
+      --destination ${CI_REGISTRY}:latest 
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /^v.*/
+
+notify_success:
+  stage: notify_success
+  image:
+    name: alpine/curl
+  script:
+    - curl -s -d "chat_id=$TELEGRAM_CHAT_ID&disable_web_page_preview=1&text=$MSG_SUCCESS_BUILD_PUBLISH" $TELEGRAM_API_URL
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /^v.*/
+
+notify_error:
+  stage: notify_error
+  image:
+    name: alpine/curl
+  script:
+    - curl -s -d "chat_id=$TELEGRAM_CHAT_ID&disable_web_page_preview=1&text=$MSG_ERROR" $TELEGRAM_API_URL
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /^v.*/
+  when: on_failure
