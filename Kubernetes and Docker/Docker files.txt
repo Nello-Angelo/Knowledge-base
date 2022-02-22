@@ -12,7 +12,7 @@ CMD ["nginx", "-g", "daemon off;"]
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build (сборка .NET приложения без фронта с дополнительными csproj файлами с других .NET приложений)
 WORKDIR /src
 
-COPY ./src/ .
+COPY . .
 
 RUN dotnet nuget add source "https://dns-name/api/v4/projects/id-project/packages/nuget/index.json" --username gitlab+deploy-token-4 --password $TOKEN_REGISTRY_BOX --store-password-in-clear-text
 RUN dotnet restore "Pig.Identity.Web.Api/Pig.Identity.Web.Api.csproj"
