@@ -1,4 +1,4 @@
----
+---                                                                                  #ПОДУМАТЬ ЧТО МОЖНО ПЕРЕДЕЛАТЬ 
 - name: install 
   hosts: hostname
   become: yes 

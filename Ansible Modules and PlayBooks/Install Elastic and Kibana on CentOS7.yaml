@@ -1,4 +1,4 @@
----
+---                                                                       #ПЕРЕДЕЛАТЬ ПОД ПЯТОЕ ЯДРО НА CENTOS 7
 - name: install
   hosts: hostname
   become: yes

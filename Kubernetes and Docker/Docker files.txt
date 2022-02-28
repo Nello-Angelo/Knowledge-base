@@ -14,7 +14,7 @@ WORKDIR /src
 
 COPY . .
 
-RUN dotnet nuget add source "https://dns-name/api/v4/projects/id-project/packages/nuget/index.json" --username gitlab+deploy-token-4 --password $TOKEN_REGISTRY_BOX --store-password-in-clear-text
+RUN dotnet nuget add source "https://dns-name/api/v4/projects/id-project/packages/nuget/index.json" --username gitlab+deploy-token-4 --password password --store-password-in-clear-text
 RUN dotnet restore "Pig.Identity.Web.Api/Pig.Identity.Web.Api.csproj"
 RUN dotnet build "Pig.Identity.Web.Api/Pig.Identity.Web.Api.csproj" -c Release -o /app/build
 RUN dotnet publish "Pig.Identity.Web.Api/Pig.Identity.Web.Api.csproj" -c Release -o /app/publish

@@ -1,35 +1,3 @@
-stages: 
-   - build
-   - deploy
-
-build:
-  stage: build
-  script:
-    - oc login -s=https://*********
-    - oc start-build app -n test4 --follow -w
-  only:
-    changes:
-      - projects/core-lib/**/**/**/**/**/**/**/*
-      - projects/administration/**/**/**/**/**/**/*
-      - tsconfig.json
-      - angular.json
-      - nginx.conf
-      - custom-webpack.config.js
-      - docker/Dockerfile
-
-deploy:
-  stage: deploy 
-  script: oc rollout latest app -n test4 && oc rollout status deploymentconfig app -n test4 -w
-  only:
-    changes:
-      - projects/core-lib/**/**/**/**/**/**/**/*
-      - projects/administration/**/**/**/**/**/**/*
-      - tsconfig.json
-      - angular.json
-      - nginx.conf
-      - custom-webpack.config.js
-      - docker/Dockerfile
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 image: mcr.microsoft.com/dotnet/sdk:6.0
 
 variables:
