@@ -57,7 +57,6 @@
     loop:
      - java
      - elasticsearch
-     - kibana
 
   - lineinfile:
       path: /etc/selinux/config
@@ -119,30 +118,6 @@
       line: 'LimitMEMLOCK=infinity'
       firstmatch: yes
 
-  - lineinfile:
-      path: /etc/kibana/kibana.yml
-      regexp: '^#server.port: 5601'
-      line: 'server.port: 5601'
-      firstmatch: yes
-
-  - lineinfile:
-      path: /etc/kibana/kibana.yml
-      regexp: '^#server.host: \"localhost\"'
-      line: 'server.host: "ip-address"'
-      firstmatch: yes
-
-  - lineinfile:
-      path: /etc/kibana/kibana.yml
-      regexp: '^#server.name: \"your-hostname\"'
-      line: 'server.name: "hostname"'
-      firstmatch: yes
-
-  - lineinfile:
-      path: /etc/kibana/kibana.yml
-      regexp: '^#elasticsearch.hosts: \["http://localhost:9200"\]'
-      line: 'elasticsearch.hosts: ["http://ip-address:9200"]'
-      firstmatch: yes
-
   - firewalld:
       port: "{{item}}"
       permanent: yes
@@ -150,7 +125,6 @@
       state: enabled
     loop:
       - 9200/tcp
-      - 5601/tcp
 
   - name: start
     systemd:
@@ -159,6 +133,5 @@
       enabled: yes
     loop:
       - elasticsearch
-      - kibana
 
   - shell: reboot  
