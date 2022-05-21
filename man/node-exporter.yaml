@@ -1,0 +1,104 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: node-exporter
+  namespace: metrica
+spec:
+  selector:
+    app: node-exporter
+  ports:
+  - name: node-exporter
+    protocol: TCP
+    port: 9100
+    targetPort: 9100
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  labels:
+    app: node-exporter
+  namespace: metrica
+spec:
+  selector:
+    matchLabels:
+      app: node-exporter
+  template:
+    metadata:
+      labels:
+        app: node-exporter
+    spec:
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+            type: ''
+        - name: sys
+          hostPath:
+            path: /sys
+            type: ''
+        - name: root
+          hostPath:
+            path: /
+            type: ''
+      containers:
+        - name: node-exporter
+          image: 'quay.io/prometheus/node-exporter:v1.1.2'
+          imagePullPolicy: IfNotPresent
+          args:
+            - --path.procfs=/host/proc
+            - --path.sysfs=/host/sys
+            - --path.rootfs=/host/root
+            - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker|var/lib/containerd|var/lib/containers/.+)($|/)
+            - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
+          ports:
+            - name: metrics
+              containerPort: 9100
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 24Mi
+          volumeMounts:
+            - name: proc
+              readOnly: true
+              mountPath: /host/proc
+            - name: sys
+              readOnly: true
+              mountPath: /host/sys
+            - name: root
+              readOnly: true
+              mountPath: /host/root
+      restartPolicy: Always
+      hostPID: true
+      hostIPC: true
+      hostNetwork: true
+      securityContext:
+        runAsUser: 65534
+        runAsNonRoot: true
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+              - matchExpressions:
+                  - key: beta.kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+      tolerations:
+        - operator: Exists
+          effect: NoSchedule
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
