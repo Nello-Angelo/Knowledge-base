@@ -3,7 +3,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: node-exporter
-  namespace: metrica
 spec:
   selector:
     app: node-exporter
@@ -19,7 +18,6 @@ metadata:
   name: node-exporter
   labels:
     app: node-exporter
-  namespace: metrica
 spec:
   selector:
     matchLabels:
