@@ -1,0 +1,90 @@
+{{- if .Values.addMore.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app.name }}
+  labels:
+    app: back
+    label: back
+data:
+  {{- with .Values.addMore.plugins }}
+  - name: "36t35"
+    version: "326342"
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+{{- end }} 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+      {{- if and (eq .Values.service.type "NodePort") .Values.service.nodePort }} (if передаётся функция and. Которая проверяет истинность двух значений. Истина, если type равен NodePort и если значение NodePort определено)
+      nodePort: {{ .Values.service.nodePort }} (номер порта)
+      {{- end }}
+
+image: "{{ .Values.application.image.repository }}:{{ .Values.application.image.tag | default "centos-rpm" }}"  ( default .Chart.AppVersion как альтернатива )
+
+eq .Values.service.type "NodePort" (оператор eq проверяет эквивалентно ли поле type значению в нем которое должно быть "NodePort")
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+conf:
+  defaultConf: |-
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location / {
+            root   /usr/local/openresty/nginx/html;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/local/openresty/nginx/html;
+        }
+    }
+html:
+  index: |-
+    <html>
+      <head>
+        <title>Тестовая страница</title>
+        <meta charset="UTF-8">
+      </head>
+      <body>
+        <h1>Тестовая страница</h1>
+      </body>
+    </html>
+  50x: |-
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <title>Error</title>
+    <style>
+        body {
+            width: 35em;
+            margin: 0 auto;
+            font-family: Tahoma, Verdana, Arial, sans-serif;
+        }
+    </style>
+    </head>
+    <body>
+    <h1>An error occurred.</h1>
+    <p>Sorry, the page you are looking for is currently unavailable.<br/>
+    Please try again later.</p>
+    </body>
+    </html>
+
+
+data:
+  default.conf: |-
+{{ .Values.conf.defaultConf | indent 4 }}   (пример с одним файлом)
+
+
+data:
+{{- range $name, $value :=  .Values.html }}   (пример когда кол-во файлов неизвестно и нужно подставить все которые добавит пользователь)
+  {{ $name }}.html: |
+{{ $value | indent 4 }}
+{{- end }}
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
