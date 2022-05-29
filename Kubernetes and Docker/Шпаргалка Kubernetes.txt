@@ -29,6 +29,8 @@ docker rm $(docker ps --filter status=exited --all -q) (удаляет выво�
 docker pull ubuntu:14.04 (загрузка образа) docker images (покажет список всех образов, хранящихся на машине) 
 docker inspect имя образа (Docker inspect отображает низкоуровневую информацию о конкретном объекте Docker) docker build . (собрать dockerfile в текущей директории)
 docker image ls -q | xargs -I {} docker image rm -f {} (удалить все имеджи)
+docker run -i -t -e  TRIVY_INSECURE=true aquasec/trivy image k8s.gcr.io/metrics-server/metrics-server:v0.6.1 (сканирование образов на уязвимости)
+helm upgrade --install metrics-server metrics-server/ --namespace kube-system (обновление релиза чарта с занятым)
 
 
 ПРИМЕР КОНФИГУРАЦИИ Pod С ПЕРЕМЕННЫМИ СРЕДЫ 
