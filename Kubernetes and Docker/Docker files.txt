@@ -9,7 +9,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /usr/src/app/dist/my-new-app /usr/share/nginx/html
 CMD ["nginx", "-g", "daemon off;"]
 ---------------------------------------------------------------------------------------------------
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build (сборка .NET приложения без фронта с дополнительными csproj файлами с других .NET приложений)
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build (сборка .NET приложения без фронта с дополнительными csproj файлами с других .NET приложений)
 WORKDIR /src
 
 COPY . .
@@ -19,7 +19,7 @@ RUN dotnet restore "Pig.Identity.Web.Api/Pig.Identity.Web.Api.csproj"
 RUN dotnet build "Pig.Identity.Web.Api/Pig.Identity.Web.Api.csproj" -c Release -o /app/build
 RUN dotnet publish "Pig.Identity.Web.Api/Pig.Identity.Web.Api.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS final
 WORKDIR /app
 EXPOSE 80
 COPY --from=build /app/publish .
