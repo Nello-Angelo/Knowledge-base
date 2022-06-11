@@ -5,7 +5,8 @@ metadata:
   name: managed-nfs-storage
 provisioner: k8s-sigs.io/nfs-subdir-external-provisioner 
 parameters:
-  archiveOnDelete: "false"
+  description: Kubernetes volume
+reclaimPolicy: Retain
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -116,6 +117,7 @@ metadata:
   name: claim
 spec:
   storageClassName: managed-nfs-storage
+  volumeMode: Filesystem
   accessModes:
     - ReadWriteMany
   resources:
