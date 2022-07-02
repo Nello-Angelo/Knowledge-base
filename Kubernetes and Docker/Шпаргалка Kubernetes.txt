@@ -30,7 +30,10 @@ docker pull ubuntu:14.04 (загрузка образа) docker images (пока
 docker inspect имя образа (Docker inspect отображает низкоуровневую информацию о конкретном объекте Docker) docker build . (собрать dockerfile в текущей директории)
 docker image ls -q | xargs -I {} docker image rm -f {} (удалить все имеджи)
 docker run -i -t -e  TRIVY_INSECURE=true aquasec/trivy image k8s.gcr.io/metrics-server/metrics-server:v0.6.1 (сканирование образов на уязвимости)
+docker image inspect 3j5jjh6kv68n (посмотреть подробную информацию образа)
+docker top имя контейнера (покажет под каким UID и PID запущен контейнер на хосте)
 helm upgrade --install metrics-server metrics-server/ --namespace kube-system (обновление релиза чарта)
+
 
 
 ПРИМЕР КОНФИГУРАЦИИ Pod С ПЕРЕМЕННЫМИ СРЕДЫ 
