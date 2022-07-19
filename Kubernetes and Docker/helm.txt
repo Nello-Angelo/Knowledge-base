@@ -15,7 +15,10 @@ data:
 {{- end }} 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
       {{- if and (eq .Values.service.type "NodePort") .Values.service.nodePort }} (if передаётся функция and. Которая проверяет истинность двух значений. Истина, если type равен NodePort и если значение NodePort определено)
       nodePort: {{ .Values.service.nodePort }} (номер порта)
       {{- end }}
