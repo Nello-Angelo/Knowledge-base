@@ -1,0 +1,73 @@
+appName: nginx 
+replicaCount: 1
+strategy:
+  maxSurge: 2 
+  maxUnavailable: 0
+
+podAnnotations: {}
+  
+appLabels: 
+   akbars: bank
+   app: backend
+
+containers:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: latest
+  containerPort: 80
+  imagePullSecrets: artifactory
+  runAsUser: 10001
+  runAsGroup: 10001
+  envs: 
+    - name: ENV_COMMON
+      value: some_envs
+    - name: ENV_SERVICE
+      value: path
+
+livenessProbes:
+  failureThreshold: 3
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  successThreshold: 1
+  timeoutSeconds: 10
+readinessProbes:
+  failureThreshold: 3
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  successThreshold: 1
+  timeoutSeconds: 10
+
+service:
+  name: app-port
+  port: 5000
+  targetPort: 5000
+
+resources: 
+  limits:
+    cpu: 500m
+    memory: 400Mi
+  requests:
+    cpu: 500m
+    memory: 400Mi
+
+ingress:
+  className: kubernetes.io/ingress.class
+  annotations: {}
+  host: admin-digitalprofilecdt.gis-dev.akbars.ru
+  path: /
+  pathType: ImplementationSpecific
+  tls:
+    secretName: ingress-certs
+
+autoscaling:
+  enabled: true
+  min: 1
+  max: 3
+  CPU: 80
+  Memory: 80

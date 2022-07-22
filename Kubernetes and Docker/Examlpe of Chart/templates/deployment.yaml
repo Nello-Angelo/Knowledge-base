@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName | trunc 63 }}
+  labels:
+    {{- toYaml .Values.appLabels | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- toYaml .Values.appLabels | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: 
+      maxSurge: {{ .Values.strategy.maxSurge }}
+      maxUnavailable: {{ .Values.strategy.maxUnavailable }}
+  template:
+    metadata:
+      labels:
+        {{- toYaml .Values.appLabels | nindent 8 }}
+      annotations: 
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.containers.imagePullSecrets }}
+      containers:
+        - env:
+            {{- toYaml .Values.containers.envs | nindent 12 }}
+          name: {{ .Values.appName | trunc 63 }} 
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: {{ .Values.containers.runAsUser }}
+            runAsGroup: {{ .Values.containers.runAsGroup }}
+            allowPrivilegeEscalation: false
+          image: "{{ .Values.containers.repository }}:{{ .Values.containers.tag }}"
+          imagePullPolicy: {{ .Values.containers.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.containers.containerPort }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbes | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbes | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
