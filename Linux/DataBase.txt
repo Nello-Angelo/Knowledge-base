@@ -2,4 +2,5 @@
 su - postgres (зайти под пользователем с полными правами, в домашней папке есть все что нужно для настройки) psql -U postgres (перейти в консоль бд, если подключились к базе через форвард то добавляем -h localhost -p number-of-port) 
 pg_dump имя бд > 12/backups/dump.sql (создаем backup ввиде sql скрипта под юзером postgres, если подключились к базе через форвард то добавляем -h localhost -p number-of-port )
 psql -1 имя бд < 12/backups/dump.sql (команда для восстановления backup под юзером postgres, и если будет ошибка то откатить все к нулю, если подключились к базе через форвард то добавляем -h localhost -p number-of-port ) 
-
+.\pg_restore.exe --clean -O -h hostname -p 5432 --username "usernmae" --dbname "DBname" --verbose "C:\Users\username_in_windows\Documents\dumps\filename_of_DB_04052022.backup" 2>C:\Users\username_in_windows\Documents\dumps\filename_04052022_restore.log
+.\pg_dump.exe -h hostname -p 5432 -U usernmae -F c -b -v -O -x -f C:\Users\abzalovia\Documents\dumps\documentservice_dev_04052022.backup --dbname DBname  2>C:\Users\username_in_windows\Documents\dumps\filename_04052022_restore.log
