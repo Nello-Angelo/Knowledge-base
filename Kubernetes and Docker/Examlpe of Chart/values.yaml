@@ -20,33 +20,33 @@ containers:
   runAsGroup: 10001
   envs: 
     - name: ENV_COMMON
-      value: some_envs
+      value: value
     - name: ENV_SERVICE
-      value: path
+      value: value
 
 livenessProbes:
   failureThreshold: 3
   httpGet:
-    path: /health
-    port: http
-  initialDelaySeconds: 60
+    path: /
+    port: 80
+  initialDelaySeconds: 5
   periodSeconds: 30
   successThreshold: 1
   timeoutSeconds: 10
 readinessProbes:
   failureThreshold: 3
   httpGet:
-    path: /health
-    port: http
-  initialDelaySeconds: 60
+    path: /
+    port: 80
+  initialDelaySeconds: 5
   periodSeconds: 30
   successThreshold: 1
   timeoutSeconds: 10
 
 service:
-  name: app-port
+  portName: app-port
   port: 5000
-  targetPort: 5000
+  targetPort: 80
 
 resources: 
   limits:
@@ -57,7 +57,6 @@ resources:
     memory: 400Mi
 
 ingress:
-  className: kubernetes.io/ingress.class
   annotations: {}
   host: admin-digitalprofilecdt.gis-dev.akbars.ru
   path: /

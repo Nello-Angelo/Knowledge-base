@@ -9,6 +9,6 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
-      name: {{ .Values.service.name | trunc 63 }}
+      name: {{ .Values.service.portName | trunc 63 }}
   selector:
     {{- toYaml .Values.appLabels | nindent 4 }}
